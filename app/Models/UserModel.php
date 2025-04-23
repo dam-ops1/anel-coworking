@@ -11,25 +11,43 @@ class UserModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
+    protected $beforeInsert  = ['hashPassword'];
+    protected $beforeUpdate  = ['hashPassword'];
 
     protected $allowedFields = [
+        'role_id',
         'username',
         'email',
         'password_hash',
         'full_name',
-        'role',
-        'is_active'
+        'phone',
+        'company_name',
+        'bio',
+        'profile_image',
+        'services_offered',
+        'created_at',
+        'updated_at',
+        'last_login',
+        'is_active',
+        'email_verified',
+        'activation_token',
+        'reset_token',
+        'reset_token_expires',
     ];
 
     protected $useTimestamps = true;
+    protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
     protected $validationRules = [
-        'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username,user_id,{user_id}]',
-        'email' => 'required|valid_email|is_unique[users.email,user_id,{user_id}]',
-        'password_hash' => 'required',
-        'full_name' => 'required|min_length[3]|max_length[100]'
+        'username'         => 'required|min_length[3]|max_length[20]|is_unique[users.username]',
+        'email'            => 'required|valid_email|is_unique[users.email]',
+        'password'         => 'required|min_length[6]',
+        'password_confirm' => 'required|matches[password]',
+        'full_name'        => 'required|min_length[3]|max_length[50]',
+        'phone'            => 'permit_empty|regex_match[/^\d{9,10}$/]',
+        'company_name'     => 'permit_empty|max_length[100]',
     ];
 
     protected $validationMessages = [
@@ -40,9 +58,12 @@ class UserModel extends Model
             'is_unique' => 'Este nombre de usuario ya está en uso'
         ],
         'email' => [
-            'required' => 'El correo electrónico es obligatorio',
-            'valid_email' => 'Debe proporcionar un correo electrónico válido',
-            'is_unique' => 'Este correo electrónico ya está registrado'
+            'required' => 'El email es obligatorio',
+            'valid_email' => 'Debe proporcionar un email válido',
+            'is_unique' => 'Este email ya está registrado'
+        ],
+        'phone' => [
+            'regex_match' => 'El número de teléfono debe tener un formato válido'
         ],
         'full_name' => [
             'required' => 'El nombre completo es obligatorio',
@@ -51,18 +72,15 @@ class UserModel extends Model
         ]
     ];
 
-    protected $beforeInsert = ['hashPassword'];
-    protected $beforeUpdate = ['hashPassword'];
-
     protected function hashPassword(array $data)
     {
-        if (!isset($data['data']['password'])) {
-            return $data;
+        if (! empty($data['data']['password'])) {
+            $data['data']['password_hash'] = password_hash(
+                $data['data']['password'],
+                PASSWORD_DEFAULT
+            );
+            unset($data['data']['password'], $data['data']['password_confirm']);
         }
-
-        $data['data']['password_hash'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
-        unset($data['data']['password']);
-
         return $data;
     }
 

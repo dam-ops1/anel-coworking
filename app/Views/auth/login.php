@@ -15,29 +15,62 @@
                         </div>
                     <?php endif; ?>
 
-                    <?php if (session()->has('message')): ?>
+                    <?php if (session()->has('success')): ?>
                         <div class="alert alert-success">
-                            <?= session('message') ?>
+                            <?= session('success') ?>
                         </div>
                     <?php endif; ?>
+
+                    <?php if (isset($validation) && $validation->getErrors()): ?>
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                <?php foreach ($validation->getErrors() as $error): ?>
+                                    <li><?= esc($error) ?></li>
+                                <?php endforeach ?>
+                            </ul>
+                        </div>
+                    <?php endif ?>
 
                     <form action="<?= base_url('login') ?>" method="post">
                         <?= csrf_field() ?>
                         
                         <div class="form-group mb-3">
                             <label for="email">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            <input type="email" 
+                                   class="form-control <?= (isset($validation) && $validation->hasError('email')) ? 'is-invalid' : '' ?>" 
+                                   id="email" 
+                                   name="email" 
+                                   value="<?= old('email') ?>"
+                                   required>
+                            <?php if (isset($validation) && $validation->hasError('email')): ?>
+                                <div class="invalid-feedback">
+                                    <?= $validation->getError('email') ?>
+                                </div>
+                            <?php endif ?>
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="password">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" 
+                                   class="form-control <?= (isset($validation) && $validation->hasError('password')) ? 'is-invalid' : '' ?>" 
+                                   id="password" 
+                                   name="password" 
+                                   required>
+                            <?php if (isset($validation) && $validation->hasError('password')): ?>
+                                <div class="invalid-feedback">
+                                    <?= $validation->getError('password') ?>
+                                </div>
+                            <?php endif ?>
                         </div>
 
-                        <div class="d-grid">
+                        <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
                         </div>
                     </form>
+
+                    <div class="mt-3 text-center">
+                        <p>¿No tienes una cuenta? <a href="<?= base_url('register') ?>">Regístrate</a></p>
+                    </div>
                 </div>
             </div>
         </div>

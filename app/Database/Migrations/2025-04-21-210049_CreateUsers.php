@@ -3,8 +3,7 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
-use CodeIgniter\Database\Forge;
-use CodeIgniter\Database\RawSql; // Necesario para CURRENT_TIMESTAMP
+use CodeIgniter\Database\RawSql;
 
 class CreateUsers extends Migration
 {
@@ -21,18 +20,16 @@ class CreateUsers extends Migration
                 'type'           => 'INT',
                 'constraint'     => 11,
                 'unsigned'       => true,
-                'null'           => true, // Puede ser NULL si un usuario no tiene un rol asignado
+                'null'           => true,
             ],
             'username' => [
                 'type'       => 'VARCHAR',
-                'constraint' => '255',
-                'unique'     => true,
+                'constraint' => '50',
                 'null'       => false,
             ],
             'email' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',
-                'unique'     => true,
                 'null'       => false,
             ],
             'password_hash' => [
@@ -42,17 +39,17 @@ class CreateUsers extends Migration
             ],
             'full_name' => [
                 'type'       => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => '100',
                 'null'       => true,
             ],
-             'phone' => [
+            'phone' => [
                 'type'       => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => '20',  // Formato internacional: +34 XXX XXX XXX
                 'null'       => true,
             ],
             'company_name' => [
                 'type'       => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => '100',
                 'null'       => true,
             ],
             'bio' => [
@@ -64,13 +61,18 @@ class CreateUsers extends Migration
                 'constraint' => '255',
                 'null'       => true,
             ],
-             'services_offered' => [
+            'services_offered' => [
                 'type' => 'TEXT',
                 'null' => true,
             ],
             'created_at' => [
                 'type'    => 'DATETIME',
-                'null'    => false, // Es mejor que tenga un timestamp de creación
+                'null'    => false,
+                'default' => new RawSql('CURRENT_TIMESTAMP'),
+            ],
+            'updated_at' => [
+                'type'    => 'DATETIME',
+                'null'    => false,
                 'default' => new RawSql('CURRENT_TIMESTAMP'),
             ],
             'last_login' => [
@@ -82,17 +84,46 @@ class CreateUsers extends Migration
                 'default' => true,
                 'null'    => false,
             ],
+            'email_verified' => [
+                'type'    => 'BOOLEAN',
+                'default' => false,
+                'null'    => false,
+            ],
+            'activation_token' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '100',
+                'unique'     => true,
+                'null'       => true,
+            ],
+            'reset_token' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '100',
+                'unique'     => true,
+                'null'       => true,
+            ],
+            'reset_token_expires' => [
+                'type' => 'DATETIME',
+                'null' => true,
+            ],
         ]);
 
+        // Clave primaria
         $this->forge->addPrimaryKey('user_id');
-        // La tabla 'roles' debe existir ANTES de crear 'users'
-        $this->forge->addForeignKey('role_id', 'roles', 'role_id', 'NO ACTION', 'NO ACTION'); // Ajusta las acciones ON DELETE/UPDATE si es necesario
+        
+        // Claves foráneas
+        $this->forge->addForeignKey('role_id', 'roles', 'role_id', 'SET NULL', 'CASCADE');
+        
+        // Índices
+        $this->forge->addKey('email', false, true);
+        $this->forge->addKey('username', false, true);
+        $this->forge->addKey('role_id', false);
+        $this->forge->addKey(['deleted_at', 'is_active'], false);
 
         $this->forge->createTable('users');
     }
 
     public function down()
     {
-        $this->forge->dropTable('users');
+        $this->forge->dropTable('users', true);
     }
 }

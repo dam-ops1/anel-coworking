@@ -5,15 +5,15 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-// Rutas de migración (solo para desarrollo)
-$routes->get('migrate', 'MigrateController::index');
-$routes->get('migrate/rollback/(:num)', 'MigrateController::rollback/$1');
+
+ 
 
 // Rutas de autenticación
+$routes->get('register', 'AuthController::register');
+$routes->post('register', 'AuthController::register');
 $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::login');
 $routes->get('logout', 'AuthController::logout');
-$routes->get('create-test-user', 'AuthController::createTestUser'); // Ruta temporal
 
 // Redirigir la página principal al calendario de reservas
 $routes->get('/', 'RoomController::calendar');

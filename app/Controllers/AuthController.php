@@ -16,36 +16,57 @@ class AuthController extends Controller
 
     public function login()
     {
-
-        echo "Método: " . $this->request->getMethod();
-        echo "<pre>";
-        print_r($this->request->getPost());
-        echo "</pre>";
-        
-        if ($this->request->getMethod() === 'POST') {
-            echo "<pre>";
-            echo "entra";
-            echo "</pre>";
-            $email = $this->request->getPost('email');
-            $password = $this->request->getPost('password');
-
-            $user = $this->userModel->where('email', $email)->first();
-
-            if ($user && password_verify($password, $user['password_hash'])) {
-                $sessionData = [
-                    'user_id' => $user['user_id'],
-                    'email' => $user['email'],
-                    'full_name' => $user['full_name'],
-                    'isLoggedIn' => true
-                ];
-
-                session()->set($sessionData);
-                return redirect()->to('/rooms/calendar')->with('message', 'Bienvenido ' . $user['full_name']);
-            }
-
-            return redirect()->back()->with('error', 'Email o contraseña incorrectos');
+        // 1) Si no es POST, solo muestro la vista
+        if ($this->request->getMethod() !== 'POST') {
+            return view('auth/login');
         }
-        return view('auth/login');
+
+        // 2) Validación
+        $rules = [
+            'email'    => 'required|valid_email',
+            'password' => 'required'
+        ];
+
+        if (!$this->validate($rules)) {
+            return view('auth/login', [
+                'validation' => $this->validator
+            ]);
+        }
+
+        // 3) Intento autenticar
+        $email = $this->request->getPost('email');
+        $password = $this->request->getPost('password');
+
+        $user = $this->userModel->where('email', $email)->first();
+
+        // ¡DEBUG! — verás en pantalla lo que hay en $user y si password_verify devuelve true/false
+        dd([
+            'user'    => $user,
+            'verify'  => $user
+                ? password_verify($password, $user['password_hash'])
+                : null,
+            'raw_pwd' => $password,
+        ]);
+
+        if ($user && password_verify($password, $user['password_hash'])) {
+            // Login exitoso
+            $sessionData = [
+                'user_id' => $user['user_id'],
+                'username' => $user['username'],
+                'email' => $user['email'],
+                'full_name' => $user['full_name'],
+                'isLoggedIn' => true
+            ];
+
+            session()->set($sessionData);
+            return redirect()->to('/dashboard')
+                           ->with('success', 'Bienvenido ' . $user['full_name']);
+        }
+
+        // 4) Si llegamos aquí, falló la autenticación
+        return redirect()->back()
+                        ->with('error', 'Email o contraseña incorrectos')
+                        ->withInput();
     }
 
     public function logout()
@@ -54,29 +75,56 @@ class AuthController extends Controller
         return redirect()->to('/login')->with('message', 'Has cerrado sesión correctamente');
     }
 
-    // Método temporal para crear un usuario de prueba
-    public function createTestUser()
-    {
-        // Verificar si ya existe el usuario
-        $existingUser = $this->userModel->where('email', 'admin@example.com')->first();
-        
-        if ($existingUser) {
-            return 'El usuario de prueba ya existe. Puedes iniciar sesión con admin@example.com y contraseña: admin123';
-        }
+    public function register()
+{
+    helper(['form']);
 
-        $userData = [
-            'username' => 'admin',
-            'email' => 'admin@example.com',
-            'password' => 'admin123', // Se hasheará automáticamente
-            'full_name' => 'Administrador',
-            'role' => 'admin',
-            'is_active' => 1
-        ];
-
-        if ($this->userModel->createUser($userData)) {
-            return 'Usuario de prueba creado exitosamente. Email: admin@example.com, Contraseña: admin123';
-        }
-
-        return 'Error al crear el usuario de prueba';
+    // Sólo muestro el formulario si no es POST
+    if ($this->request->getMethod() !== 'post') {
+        return view('auth/register');
     }
+
+    // 1) Reglas de validación
+    $rules = [
+        'username'         => 'required|min_length[3]|max_length[20]|is_unique[users.username]',
+        'email'            => 'required|valid_email|is_unique[users.email]',
+        'password'         => 'required|min_length[6]',
+        'password_confirm' => 'required|matches[password]',
+        'full_name'        => 'required|min_length[3]|max_length[50]',
+        'phone'            => 'permit_empty|regex_match[/^\d{9,10}$/]',
+        'company_name'     => 'permit_empty|max_length[100]',
+    ];
+
+    if (! $this->validate($rules)) {
+        return view('auth/register', [
+            'validation' => $this->validator,
+        ]);
+    }
+
+    // 2) ¡Ojo! Capturo **todos** los campos que vienen, incluyendo password y password_confirm
+    $post = $this->request->getPost([
+        'username',
+        'email',
+        'password',
+        'password_confirm',
+        'full_name',
+        'phone',
+        'company_name',
+    ]);
+
+    // 3) Le paso ese array a save(), que:
+    //    a) valida otra vez según $validationRules en el modelo
+    //    b) dispara beforeInsert::hashPassword(), detecta $data['password'] y genera password_hash
+    //    c) inserta el usuario
+    if (! $this->userModel->save($post)) {
+        return view('auth/register', [
+            'validation' => $this->userModel->errors(),
+        ]);
+    }
+
+    // 4) Todo OK, redirijo al login
+    return redirect()->to('/login')
+                     ->with('success', 'Registro exitoso. Por favor inicia sesión.');
+}
+
 } 
