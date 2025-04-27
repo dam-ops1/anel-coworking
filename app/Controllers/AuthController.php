@@ -13,6 +13,8 @@ class AuthController extends Controller
     protected $messagesRegister;
     protected $messagesLogin;
 
+    protected $emailController;
+
     public function __construct()
     {
         helper("userRules");
@@ -26,6 +28,8 @@ class AuthController extends Controller
 
         $this->rulesLogin = get_user_login_rules();
         $this->messagesLogin = get_user_login_messege();
+
+        $this->emailController = new EmailController();
     }
 
     public function login()
@@ -89,13 +93,21 @@ class AuthController extends Controller
                             ->withInput() 
                             ->with('validation', $this->validator); 
         }
-
-        $result = $this->userModel->createUser($this->request->getPost());
         
-        if ($result) {
-            // Si el usuario se creó correctamente, redirijo al login
-            return redirect()->to('/login')
-                            ->with('success', 'Registro exitoso. Por favor inicia sesión.');
+        // Creo el usuario llamando al modelo
+        $userId = $this->userModel->createUser($this->request->getPost());
+
+        
+        
+        if ($userId) {
+            $user = $this->userModel->find($userId);
+
+            return $this->emailController->sendEmailToRegister($user['email'], 'Registro Exitoso', $user);
+            
+            // // Si el usuario se creó correctamente, redirijo al login
+            // return redirect()->to('/login')
+            //                 ->with('success', 'Registro exitoso. Por favor inicia sesión.');
+
         } else {
             // Si hubo un error al crear el usuario, redirijo de nuevo al registro
             return redirect()->back()

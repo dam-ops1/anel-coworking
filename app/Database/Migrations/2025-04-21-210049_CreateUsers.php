@@ -20,7 +20,7 @@ class CreateUsers extends Migration
                 'type'           => 'INT',
                 'constraint'     => 11,
                 'unsigned'       => true,
-                'null'           => true,
+                'null'           => false,
             ],
             'username' => [
                 'type'       => 'VARCHAR',
@@ -111,7 +111,7 @@ class CreateUsers extends Migration
         $this->forge->addPrimaryKey('user_id');
         
         // Claves foráneas
-        $this->forge->addForeignKey('role_id', 'roles', 'role_id', 'SET NULL', 'CASCADE');
+        $this->forge->addForeignKey('role_id', 'roles', 'role_id', 'CASCADE', 'CASCADE');
         
         // Índices
         $this->forge->addKey('email', false, true);

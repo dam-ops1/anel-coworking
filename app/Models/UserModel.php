@@ -39,31 +39,60 @@ class UserModel extends Model
     protected $updatedField = 'updated_at';
 
     public function createUser($userData)
-{
-    if (isset($userData['password'])) {
-        $userData['password_hash'] = password_hash($userData['password'], PASSWORD_DEFAULT);
-        unset($userData['password'], $userData['password_confirm']);
-    }
-
-    // Intentar guardar
-    if (! $this->save($userData)) {
-        // Si la operación no es exitosa, capturamos el error
-        $errors = $this->errors();  // Obtiene los errores
-        log_message('error', 'Error al guardar el usuario: ' . json_encode($errors));
-        return false;
-    }
-
-    return true;
-}
-
-
-    public function getRules()
     {
-        return $this->validationRules;
+        // Genera el hash de la contraseña
+        if (isset($userData['password'])) {
+            $userData['password_hash'] = password_hash($userData['password'], PASSWORD_DEFAULT);
+            unset($userData['password'], $userData['password_confirm']);
+        }
+
+        // agregamos el role_id por defecto
+        $userData['role_id'] = 2;
+
+        // Generar un token de activación
+        $this->addTokentoUser($userData);
+
+
+        // Generar la fecha de creación
+        $userData['created_at'] = date('Y-m-d H:i:s');
+
+
+        // Intentar guardar y si falla retornar false
+        if (! $this->save($userData)) return null;
+
+        return $this->getInsertID();
     }
 
-    public function getMessages()
+    private function addTokentoUser(&$userData)
     {
-        return $this->validationMessages;
+        // Generar un token único para la activación de la cuenta
+        $token = bin2hex(random_bytes(20));
+
+        $userData['activation_token'] = $token;
+    }
+
+    private function getResetToken(&$userData)
+    {
+        // Generar un token único para el restablecimiento de la contraseña
+        $token = bin2hex(random_bytes(20));
+        $userData['reset_token'] = $token;
+        $userData['reset_token_expires'] = date('Y-m-d H:i:s', strtotime('+1 hour'));
+    }
+    
+    private function getActivationToken($userData)
+    {
+        // Generar un token único para la activación de la cuenta
+        $token = bin2hex(random_bytes(20));
+        $userData['activation_token'] = $token;
+    }
+
+    private function getUserByEmail($email)
+    {
+        return $this->where('email', $email)->first();
+    }
+
+    private function getUserById($userId)
+    {
+        return $this->where('user_id', $userId)->first();
     }
 }

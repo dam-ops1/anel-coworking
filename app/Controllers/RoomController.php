@@ -15,6 +15,7 @@ class RoomController extends ResourceController
     {
         $this->roomModel = new RoomModel();
         $this->bookingModel = new BookingModel();
+        
     }
 
     public function index()
