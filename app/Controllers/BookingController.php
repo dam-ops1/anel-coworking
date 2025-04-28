@@ -24,7 +24,7 @@ class BookingController extends ResourceController
     {
         $userId = session()->get('user_id');
         if (!$userId) {
-            return redirect()->to('/login')->with('error', 'Debe iniciar sesión para ver sus reservas');
+            return redirect()->to('/')->with('error', 'Debe iniciar sesión para ver sus reservas');
         }
 
         $data['bookings'] = $this->bookingModel->getUserBookings($userId);

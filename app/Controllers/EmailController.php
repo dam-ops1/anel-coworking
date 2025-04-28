@@ -6,38 +6,58 @@ use CodeIgniter\Controller;
 
 class EmailController extends Controller
 {
-    public function sendEmailToRegister($to, $subject, $user)
+    protected $messageController;
+    protected $email;
+
+    public function __construct()
     {
-        // Cargar la librería de email
-        $email = \Config\Services::email();
+        $this->messageController = new MessageController();
+        $this->email = \Config\Services::email();
 
         // Configuración del correo
-        $email->setFrom('anelcoworking@gmail.com', 'Anel Coworking');
-        $email->setTo($to);
-        $email->setSubject($subject);
+        $this->email->setFrom('anelcoworking@gmail.com', 'Anel Coworking');
+        
+    }
+
+    public function sendEmailToRegister($to, $subject, $user)
+    {
+        
+
+        $this->email->setTo($to);
+        $this->email->setSubject($subject);
         $message = $this->getBogyRegister($user);
-        $email->setMessage($message);
-        // Enviar correo
-        if ($email->send()) {
-            $title = 'Registro Exitoso';
-            $message = 'Tu cuenta ha sido creada correctamente. Revisa tu correo para iniciar sesión.';
+        $this->email->setMessage($message);
+                
+        if ($this->email->send()) {
             // Mostrar mensaje de éxito
-            return $this->showMessage($title, $message);
+            return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", '/', 'Iniciar Sesión');
         } else {
             // Mostrar errores en caso de fallo
-            echo $email->printDebugger(['headers']);
+            $this->messageController->showMessage("Error", "Ha ocurrido un error intentelo de nuevo más tarde.", 'register', 'Registro');
+        }
+
+
+                
+            
+    }
+
+    public function sendEmailToResetPassword($to, $subject, $user, $token)
+    {
+        $this->email->setTo($to);
+        $this->email->setSubject($subject);
+        $message = $this->getBodyResetPassword($user, $token);
+        $this->email->setMessage($message);
+
+        if ($this->email->send()) {
+            // Mostrar mensaje de éxito
+            return $this->messageController->showMessage("Correo Enviado", "El correo para cambiar la contraseña ha sido enviado exitosamente.", '/', 'Iniciar Sesión');
+        } else {
+            // Mostrar errores en caso de fallo
+            $this->messageController->showMessage("Error", "Ha ocurrido un error intentelo de nuevo más tarde.", '/', 'Iniciar Sesión');
         }
     }
 
-    private function showMessage($title, $message)
-    {
-        $data = [
-            'title' => $title,
-            'message' => $message
-        ];
-        
-        return view('message', $data);
-    }
+    
 
     private function getBogyRegister($user)
     {
@@ -46,6 +66,19 @@ class EmailController extends Controller
         $body = '<h1>Hola '. $user['username']. ', Bienvenido a Anel Coworking</h1>';
         $body .= '<p>Gracias por registrarte. Tu cuenta ha sido creada exitosamente.</p>';
         $body .= "<p>Por favor, verifica tu correo electrónico para activar tu cuenta. <a href='$url'>Activa tu Cuenta</a> </p>";
+        $body .= '<p>Si tienes alguna pregunta, no dudes en contactarnos.</p>';
+        $body .= '<p>Saludos,<br>Anel Coworking</p>';
+
+        return $body;
+    }
+
+    private function getBodyResetPassword($user, $token)
+    {
+        $url = base_url('auth/forgot-password/' . $token);
+
+        $body = '<h1>Hola '. $user['username']. ', Has solicitado un reinicio de contraseña</h1>';
+        $body .= '<p>Si no has solicitado este cambio, ignora este mensaje.</p>';
+        $body .= "<p>Para restablecer tu contraseña, haz clic en el siguiente enlace: <a href='$url'>Restablecer Contraseña</a></p>";
         $body .= '<p>Si tienes alguna pregunta, no dudes en contactarnos.</p>';
         $body .= '<p>Saludos,<br>Anel Coworking</p>';
 

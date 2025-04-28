@@ -63,6 +63,13 @@ class UserModel extends Model
         return $this->getInsertID();
     }
 
+    // public verifyLoginUser($email, $pass)
+    // {
+    //     $user = $this->where(
+
+    //     )
+    // }
+
     private function addTokentoUser(&$userData)
     {
         // Generar un token único para la activación de la cuenta
@@ -86,13 +93,19 @@ class UserModel extends Model
         $userData['activation_token'] = $token;
     }
 
-    private function getUserByEmail($email)
+    public function verifyUser($email, $pass)
     {
-        return $this->where('email', $email)->first();
+        $user = $this->where(['email' => $email, 'email_verified' => 1])->first();
+
+        if (!$user || !password_verify($pass, $user['password_hash'])) return null;
+
+        return $user;
     }
 
     private function getUserById($userId)
     {
         return $this->where('user_id', $userId)->first();
     }
+
+    
 }

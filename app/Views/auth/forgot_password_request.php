@@ -5,8 +5,9 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header text-center">
-                <h3>Iniciar Sesión</h3>
+                <h3>Has olvidado tu contraseña</h3>
             </div>
+
             <div class="card-body">
                 <?php if (session()->has('error')): ?>
                     <div class="alert alert-danger">
@@ -14,13 +15,7 @@
                     </div>
                 <?php endif; ?>
 
-                <?php if (session()->has('success')): ?>
-                    <div class="alert alert-success">
-                        <?= session('success') ?>
-                    </div>
-                <?php endif; ?>
-
-                <form action="<?= base_url('login') ?>" method="post">
+                <form action="<?= base_url('auth/password-email') ?>" method="post">
                     <?= csrf_field() ?>
 
                     <div class="form-group mb-3">
@@ -35,29 +30,13 @@
                         <?php endif; ?>
                     </div>
 
-                    <div class="form-group mb-3 text-end">
-                        <a href="<?= base_url('auth/forgot-password') ?>">¿Olvidaste tu contraseña?</a>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="password">Contraseña</label>
-                        <input type="password"
-                            class="form-control <?= (session('validation') && session('validation')->hasError('password')) ? 'is-invalid' : '' ?>"
-                            id="password" name="password" required>
-                        <?php if (session('validation') && session('validation')->hasError('password')): ?>
-                            <div class="invalid-feedback">
-                                <?= session('validation')->getError('password') ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                        <button type="submit" class="btn btn-primary">Enviar enlace</button>
                     </div>
                 </form>
 
                 <div class="mt-3 text-center">
-                    <p>¿No tienes una cuenta? <a href="<?= base_url('register') ?>">Regístrate</a></p>
+                    <a href="<?= base_url() ?>" class="btn btn-link">Volver a inicio de sesión</a>
                 </div>
             </div>
         </div>

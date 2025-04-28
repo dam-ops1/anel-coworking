@@ -21,4 +21,22 @@ function get_user_login_rules(): array
     ];
 }
 
+// Funciones para las reglas de validación de usuario
+function get_user_forgot_password_rules(): array
+{
+    return [
+        'email' => 'required|valid_email',
+    ];
+}
+
+function get_user_reset_password_rules(): array
+{
+    return [
+        'password' => 'required|min_length[6]',
+        'confirm_password' => 'required|matches[password]',
+    ];
+}
+
+
+
 ?>

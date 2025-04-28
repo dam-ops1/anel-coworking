@@ -125,7 +125,7 @@
                     <button type="submit" class="btn btn-primary w-100 mt-3">Registrarse</button>
 
                     <div class="text-center mt-3">
-                        ¿Ya tienes una cuenta? <a href="<?= base_url('login') ?>">Iniciar Sesión</a>
+                        ¿Ya tienes una cuenta? <a href="<?= base_url('/') ?>">Iniciar Sesión</a>
                     </div>
                 </form>
             </div>

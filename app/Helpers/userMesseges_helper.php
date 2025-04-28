@@ -51,6 +51,32 @@ function get_user_register_messege(): array
     ];
 }
 
+// Funciones para los mensajes de validación de olvido de contraseña
+
+function get_user_forgot_password_messege(): array
+{
+    return [
+        'email' => [
+            'required' => 'El email es obligatorio',
+            'valid_email' => 'Debe proporcionar un email válido'
+        ],
+    ];
+}
+
+function get_user_reset_password_messege(): array
+{
+    return [
+        'password' => [
+            'required' => 'La contraseña completo es obligatoria',
+            'min_length' => 'La contraseña debe tener al menos 6 caracteres'
+        ],
+        'confirm_password' => [
+            'required' => 'La confirmación de la contraseña es obligatoria',
+            'matches' => 'La contraseña y la confirmación no coinciden'
+        ],
+    ];
+}
+
 
 
 ?>

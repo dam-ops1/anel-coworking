@@ -11,12 +11,20 @@ use CodeIgniter\Router\RouteCollection;
 // Rutas de autenticación
 $routes->get('register', 'AuthController::register');
 $routes->post('register', 'AuthController::register');
-$routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::login');
+$routes->get('/', 'AuthController::login');
 $routes->get('logout', 'AuthController::logout');
+$routes->get('auth/activate/(:any)', 'AuthController::activateUser/$1');
+$routes->get('auth/forgot-password', 'AuthController::forgotPasswordView');
+$routes->post('auth/password-email', 'AuthController::sendResetPasswordEmail');
 
-// Redirigir la página principal al calendario de reservas
-$routes->get('/', 'RoomController::calendar');
+$routes->get('auth/forgot-password/(:any)', 'AuthController::resetPassword/$1');
+
+$routes->post('auth/reset-password', 'AuthController::resetPasswordPost');
+
+
+// // Redirigir la página principal al calendario de reservas
+// $routes->get('/', 'RoomController::calendar');
 
 // Rutas para salas
 $routes->group('rooms', function($routes) {

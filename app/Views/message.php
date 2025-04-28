@@ -15,8 +15,8 @@
                     ?>
                 </p>
                 <div class="d-grid gap-2">
-                    <a href="<?= base_url('login') ?>" class="btn btn-primary">
-                        Ir a Iniciar Sesión
+                    <a href="<?= base_url($view) ?>" class="btn btn-primary">
+                        <?php echo 'Ir a ' . $text ?>
                     </a>
                 </div>
             </div>

@@ -81,7 +81,7 @@ class CreateUsers extends Migration
             ],
             'is_active' => [
                 'type'    => 'BOOLEAN',
-                'default' => true,
+                'default' => false,
                 'null'    => false,
             ],
             'email_verified' => [

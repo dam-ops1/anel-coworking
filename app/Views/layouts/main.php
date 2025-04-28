@@ -82,7 +82,7 @@
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Configuración</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                                    <li><a class="dropdown-item" href=" <?= base_url('logout') ?> "><i class="fas fa-sign-out-alt" ></i> Cerrar Sesión</a></li>
                                 </ul>
                             </div>
                         </div>
