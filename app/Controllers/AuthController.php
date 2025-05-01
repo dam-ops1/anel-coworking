@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use CodeIgniter\Controller;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     protected $userModel;
     protected $rulesRegister;
@@ -83,6 +83,9 @@ class AuthController extends Controller
 
     public function logout(){
         
+        $userId = $this->session->get('user_id');
+        $this->userModel->logoutUser($userId);
+        
         if($this->session->get('isLoggedIn')) {
             $this->session->destroy();
         }
@@ -133,7 +136,7 @@ class AuthController extends Controller
     {
         $user = $this->userModel->where(['activation_token' => $token, 'email_verified' => 0])-> first();
 
-        if (!$user) return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", '/', 'Iniciar Sesión');
+        if (!$user) return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", 'login', 'Iniciar Sesión');
 
         $this->userModel->update(
             $user['user_id'],
@@ -143,7 +146,7 @@ class AuthController extends Controller
             ]
             );
 
-            return $this->messageController->showMessage("Error", "Error al verificar el usuario. Por favor, intentelo más tarde.", '/', 'Iniciar Sesión');
+            return $this->messageController->showMessage("Error", "Error al verificar el usuario. Por favor, intentelo más tarde.", 'login', 'Iniciar Sesión');
     }
 
     private function setSession($userData)
@@ -197,12 +200,12 @@ class AuthController extends Controller
     {
         $user = $this->userModel->where(['reset_token' => $token])->first();
 
-        if (!$user) return redirect()->to('/')->with('error', 'Token inválido o expirado.');
+        if (!$user) return redirect()->to('login')->with('error', 'Token inválido o expirado.');
 
         // Verificamos si el token ha expirado
         $expiresAt = new \DateTime($user['reset_token_expires']);
         if ($expiresAt < new \DateTime()) {
-            return $this->messageController->showMessage("Error", "El tiempo para restaurar la contraseña ya ha expirado. Por favor, solicita un nuevo enlace para cambiar tu contraseña.", '/', 'Iniciar Sesión');
+            return $this->messageController->showMessage("Error", "El tiempo para restaurar la contraseña ya ha expirado. Por favor, solicita un nuevo enlace para cambiar tu contraseña.", 'login', 'Iniciar Sesión');
         }
 
         // Aquí puedes mostrar un formulario para que el usuario ingrese su nueva contraseña
@@ -224,12 +227,12 @@ class AuthController extends Controller
 
         $user = $this->userModel->where(['reset_token' => $token])->first();
 
-        if (!$user) return redirect()->to('/')->with('error', 'Token inválido o expirado.');
+        if (!$user) return redirect()->to('login')->with('error', 'Token inválido o expirado.');
 
         // Verificamos si el token ha expirado
         $expiresAt = new \DateTime($user['reset_token_expires']);
         if ($expiresAt < new \DateTime()) {
-            return redirect()->to('/')->with('error', 'El tiempo para restaurar la contraseña ya ha expirado. Por favor, solicita un nuevo enlace para cambiar tu contraseña.');
+            return redirect()->to('login')->with('error', 'El tiempo para restaurar la contraseña ya ha expirado. Por favor, solicita un nuevo enlace para cambiar tu contraseña.');
         }
 
         // Actualizamos la contraseña y limpiamos el token
@@ -239,7 +242,7 @@ class AuthController extends Controller
             'reset_token_expires' => null
         ]);
 
-        return redirect()->to('/')->with('success', 'Contraseña actualizada exitosamente. Puedes iniciar sesión ahora.');
+        return redirect()->to('login')->with('success', 'Contraseña actualizada exitosamente. Puedes iniciar sesión ahora.');
     }
 
     

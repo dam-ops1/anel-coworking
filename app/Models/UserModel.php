@@ -93,11 +93,29 @@ class UserModel extends Model
         $userData['activation_token'] = $token;
     }
 
+    /**
+     * Verifica si el usuario existe y si la contraseña es correcta, 
+     * además verifica si el usuario esta activo
+     * Por último actualiza el estado del usuario a activo
+     * 
+     * @param string $email
+     * @param string $pass
+     * @return array|null
+     * 
+     * */
+
     public function verifyUser($email, $pass)
     {
+
+        
         $user = $this->where(['email' => $email, 'email_verified' => 1])->first();
 
         if (!$user || !password_verify($pass, $user['password_hash'])) return null;
+        if ($user['email_verified'] == 0) return null;
+
+        $this->update($user['user_id'], [
+            'is_active' => 1,
+        ]);
 
         return $user;
     }
@@ -105,6 +123,15 @@ class UserModel extends Model
     private function getUserById($userId)
     {
         return $this->where('user_id', $userId)->first();
+    }
+
+    // actualiza los datos del incio de sesion del usuario
+    public function logoutUser($userId)
+    {
+        $this->update($userId, [
+            'is_active' => 0,
+            'last_login' => date('Y-m-d H:i:s')
+        ]);
     }
 
     

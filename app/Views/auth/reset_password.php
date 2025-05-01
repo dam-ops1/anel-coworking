@@ -54,7 +54,7 @@
                 </form>
 
                 <div class="mt-3 text-center">
-                    <a href="<?= base_url('/') ?>" class="btn btn-link">Volver a inicio de sesión</a>
+                    <a href="<?= base_url('login') ?>" class="btn btn-link">Volver a inicio de sesión</a>
                 </div>
             </div>
         </div>
