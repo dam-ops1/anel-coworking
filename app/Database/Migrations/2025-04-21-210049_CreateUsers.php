@@ -47,23 +47,10 @@ class CreateUsers extends Migration
                 'constraint' => '20',  // Formato internacional: +34 XXX XXX XXX
                 'null'       => true,
             ],
-            'company_name' => [
-                'type'       => 'VARCHAR',
-                'constraint' => '100',
-                'null'       => true,
-            ],
-            'bio' => [
-                'type' => 'TEXT',
-                'null' => true,
-            ],
             'profile_image' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',
                 'null'       => true,
-            ],
-            'services_offered' => [
-                'type' => 'TEXT',
-                'null' => true,
             ],
             'created_at' => [
                 'type'    => 'DATETIME',

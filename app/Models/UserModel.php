@@ -19,10 +19,7 @@ class UserModel extends Model
         'password_hash',
         'full_name',
         'phone',
-        'company_name',
-        'bio',
         'profile_image',
-        'services_offered',
         'created_at',
         'updated_at',
         'last_login',
@@ -40,6 +37,7 @@ class UserModel extends Model
 
     public function createUser($userData)
     {
+        
         // Genera el hash de la contraseña
         if (isset($userData['password'])) {
             $userData['password_hash'] = password_hash($userData['password'], PASSWORD_DEFAULT);
@@ -62,13 +60,6 @@ class UserModel extends Model
 
         return $this->getInsertID();
     }
-
-    // public verifyLoginUser($email, $pass)
-    // {
-    //     $user = $this->where(
-
-    //     )
-    // }
 
     private function addTokentoUser(&$userData)
     {
