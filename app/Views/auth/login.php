@@ -1,66 +1,109 @@
 <?= $this->extend('layouts/auth') ?>
-
 <?= $this->section('content') ?>
-<div class="container min-vh-100 d-flex justify-content-center align-items-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header text-center">
-                <h3>Iniciar Sesión</h3>
-            </div>
-            <div class="card-body">
-                <?php if (session()->has('error')): ?>
-                    <div class="alert alert-danger">
-                        <?= session('error') ?>
-                    </div>
-                <?php endif; ?>
 
-                <?php if (session()->has('success')): ?>
-                    <div class="alert alert-success">
-                        <?= session('success') ?>
-                    </div>
-                <?php endif; ?>
+<main class="c-app flex-row align-items-center">
+  <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <div 
+      class="row w-75 bg-white" 
+      style="border-radius:.375rem; overflow:hidden; min-height:500px;"
+    >
 
-                <form action="<?= base_url('login') ?>" onsubmit="loginButton.disabled = true; return true;" method="post">
-                    <?= csrf_field() ?>
+      <!-- IZQUIERDA: logo centrado con tamaño máximo -->
+      <div 
+        class="col-12 col-md-6 col-lg-5 d-none d-md-flex justify-content-center align-items-center p-4"
+      >
+        <img
+          src="<?= base_url('images/anel-logo.png') ?>"
+          alt="Anel Logo"
+          class="img-fluid"
+          style="max-width: 115%; height: auto;"
+        >
+      </div>
 
-                    <div class="form-group mb-3">
-                        <label for="email">Correo Electrónico</label>
-                        <input type="email"
-                            class="form-control <?= (session('validation') && session('validation')->hasError('email')) ? 'is-invalid' : '' ?>"
-                            id="email" name="email" value="<?= old('email') ?>" required>
-                        <?php if (session('validation') && session('validation')->hasError('email')): ?>
-                            <div class="invalid-feedback">
-                                <?= session('validation')->getError('email') ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+      <!-- DERECHA: formulario con línea divisoria -->
+      <div 
+        class="col-12 col-md-6 col-lg-7 p-5 border-start border-2" 
+        style="border-color: #dee2e6;"
+      >
+        <h4 class="text-center mb-4">Iniciar Sesión</h4>
 
-                    <div class="form-group mb-3 text-end">
-                        <a href="<?= base_url('auth/forgot-password') ?>">¿Olvidaste tu contraseña?</a>
-                    </div>
+        <!-- Flash messages -->
+        <?php if (session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+        <?php endif; ?>
+        <?php if (session()->getFlashdata('success')): ?>
+          <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+        <?php endif; ?>
 
-                    <div class="form-group mb-3">
-                        <label for="password">Contraseña</label>
-                        <input type="password"
-                            class="form-control <?= (session('validation') && session('validation')->hasError('password')) ? 'is-invalid' : '' ?>"
-                            id="password" name="password" required>
-                        <?php if (session('validation') && session('validation')->hasError('password')): ?>
-                            <div class="invalid-feedback">
-                                <?= session('validation')->getError('password') ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+        <form 
+          action="<?= base_url('login') ?>" 
+          method="post"
+          onsubmit="this.loginButton.disabled=true; this.loginButton.innerText='Cargando…'; return true;"
+        >
+          <?= csrf_field() ?>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary" name="loginButton">Iniciar Sesión</button>
-                    </div>
-                </form>
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value="<?= old('email') ?>"
+              class="form-control <?= (session('validation') && session('validation')->hasError('email')) ? 'is-invalid' : '' ?>"
+              required
+            >
+            <?php if (session('validation') && session('validation')->hasError('email')): ?>
+              <div class="invalid-feedback">
+                <?= session('validation')->getError('email') ?>
+              </div>
+            <?php endif; ?>
+          </div>
 
-                <div class="mt-3 text-center">
-                    <p>¿No tienes una cuenta? <a href="<?= base_url('register') ?>">Regístrate</a></p>
+          <div class="mb-3 text-end">
+            <a href="<?= base_url('auth/forgot-password') ?>">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="form-label">Contraseña</label>
+            <div class="input-group">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control <?= (session('validation') && session('validation')->hasError('password')) ? 'is-invalid' : '' ?>"
+                required
+              >
+              <span class="input-group-text">
+                <i class="cil-lock-locked"></i>
+              </span>
+              <?php if (session('validation') && session('validation')->hasError('password')): ?>
+                <div class="invalid-feedback d-block">
+                  <?= session('validation')->getError('password') ?>
                 </div>
+              <?php endif; ?>
             </div>
+          </div>
+
+          <div class="d-grid">
+            <button
+              type="submit"
+              name="loginButton"
+              class="btn btn-primary btn-block"
+            >
+              Iniciar Sesión
+            </button>
+          </div>
+        </form>
+
+        <hr class="my-4">
+
+        <div class="text-center">
+          ¿No tienes una cuenta? <a href="<?= base_url('register') ?>">Regístrate</a>
         </div>
+      </div>
+
     </div>
-</div>
+  </div>
+</main>
+
 <?= $this->endSection() ?>
