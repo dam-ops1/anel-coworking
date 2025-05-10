@@ -16,11 +16,17 @@ $routes->get('/', 'AuthController::login');
 $routes->get('logout', 'AuthController::logout');
 $routes->get('auth/activate/(:any)', 'AuthController::activateUser/$1');
 $routes->get('auth/forgot-password', 'AuthController::forgotPasswordView');
+
+
 $routes->post('auth/password-email', 'AuthController::sendResetPasswordEmail');
 
 $routes->get('auth/forgot-password/(:any)', 'AuthController::resetPassword/$1');
 
 $routes->post('auth/reset-password', 'AuthController::resetPasswordPost');
+
+
+// Message route
+$routes->get('message', 'MessageController::index');
 
 
 // // Redirigir la página principal al calendario de reservas

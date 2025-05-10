@@ -1,29 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
+<?= $this->extend('layouts/auth') ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - Anel Coworking</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <style>
-        .register-container {
-            max-width: 500px;
-            margin: 2rem auto;
-            padding: 2rem;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
+<?= $this->section('content') ?>
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-
-<body class="bg-light">
     <div class="container">
         <div class="register-container bg-white">
             <h2 class="text-center mb-4">Crear Cuenta</h2>
@@ -35,7 +13,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form action="<?= base_url('register') ?>" method="POST">
+                <form action="<?= base_url('register') ?>" method="POST" onsubmit="registerButton.disabled = true; return true;">
                     <?= csrf_field() ?>
 
                     <div class="form-group">
@@ -122,7 +100,7 @@
                         <?php endif; ?>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Registrarse</button>
+                    <button type="submit" class="btn btn-primary w-100 mt-3" name="registerButton">Registrarse</button>
 
                     <div class="text-center mt-3">
                         ¿Ya tienes una cuenta? <a href="<?= base_url('/') ?>">Iniciar Sesión</a>
@@ -130,9 +108,4 @@
                 </form>
             </div>
         </div>
-
-        <!-- Bootstrap JS and dependencies -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+<?= $this->endSection() ?>

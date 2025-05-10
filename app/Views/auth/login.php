@@ -20,7 +20,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form action="<?= base_url('login') ?>" method="post">
+                <form action="<?= base_url('login') ?>" onsubmit="loginButton.disabled = true; return true;" method="post">
                     <?= csrf_field() ?>
 
                     <div class="form-group mb-3">
@@ -52,7 +52,7 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                        <button type="submit" class="btn btn-primary" name="loginButton">Iniciar Sesión</button>
                     </div>
                 </form>
 

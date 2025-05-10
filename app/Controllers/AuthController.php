@@ -109,31 +109,26 @@ class AuthController extends Controller
         // Creo el usuario llamando al modelo
         $userId = $this->userModel->createUser($this->request->getPost());
 
-        
-        
-        if ($userId) {
-            $user = $this->userModel->find($userId);
-
-            return $this->emailController->sendEmailToRegister($user['email'], 'Registro Exitoso', $user);
-            
-            // // Si el usuario se creó correctamente, redirijo al login
-            // return redirect()->to('/login')
-            //                 ->with('success', 'Registro exitoso. Por favor inicia sesión.');
-
-        } else {
-
-            // Si hubo un error al crear el usuario, redirijo de nuevo al registro
+        if(!$userId) 
+        {
             return redirect()->back()
-                            ->withInput()
-                            ->with('error', 'Error al crear la cuenta. Inténtalo de nuevo.');
+                    ->withInput()
+                    ->with('error', 'Error al crear la cuenta. Inténtalo de nuevo.');
         }
+
+
+        $user = $this->userModel->find($userId);
+
+        return $this->emailController->sendEmailToRegister($user['email'], 'Registro Exitoso', $user);
+            
     }
 
     public function activateUser($token)
     {
         $user = $this->userModel->where(['activation_token' => $token, 'email_verified' => 0])-> first();
 
-        if (!$user) return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", '/', 'Iniciar Sesión');
+        if (!$user) return $this->messageController->showMessage("Error", "Error al verificar el usuario. Por favor, intentelo más tarde.", '/', 'Iniciar Sesión');
+        
 
         $this->userModel->update(
             $user['user_id'],
@@ -143,7 +138,7 @@ class AuthController extends Controller
             ]
             );
 
-            return $this->messageController->showMessage("Error", "Error al verificar el usuario. Por favor, intentelo más tarde.", '/', 'Iniciar Sesión');
+        return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", '/', 'Iniciar Sesión');
     }
 
     private function setSession($userData)

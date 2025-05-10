@@ -32,13 +32,11 @@ class EmailController extends Controller
             // Mostrar mensaje de éxito
             return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", '/', 'Iniciar Sesión');
         } else {
+            
             // Mostrar errores en caso de fallo
             $this->messageController->showMessage("Error", "Ha ocurrido un error intentelo de nuevo más tarde.", 'register', 'Registro');
         }
-
-
-                
-            
+       
     }
 
     public function sendEmailToResetPassword($to, $subject, $user, $token)
