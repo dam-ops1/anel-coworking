@@ -10,7 +10,8 @@
 
       <!-- IZQUIERDA: logo centrado con tamaño máximo -->
       <div 
-        class="col-12 col-md-6 col-lg-5 d-none d-md-flex justify-content-center align-items-center p-4"
+        class="col-12 col-md-6 col-lg-5 
+               d-none d-md-flex justify-content-center align-items-center p-4"
       >
         <img
           src="<?= base_url('images/anel-logo.png') ?>"
@@ -20,14 +21,21 @@
         >
       </div>
 
-      <!-- DERECHA: formulario con línea divisoria -->
-      <div 
-        class="col-12 col-md-6 col-lg-7 p-5 border-start border-2" 
-        style="border-color: #dee2e6;"
-      >
+      <!-- DIVISOR: línea vertical corta -->
+
+      <div class="col-auto d-none d-md-flex justify-content-center">
+        <div 
+          class="vr align-self-center" 
+          style="height:400px; border-color:#dee2e6;"
+        ></div>
+      </div>
+
+      <!-- DERECHA: formulario -->
+
+      <div class="col-12 col-md-6 col-lg-6 p-5">
         <h4 class="text-center mb-4">Iniciar Sesión</h4>
 
-        <!-- Flash messages -->
+        <!-- mensajes -->
         <?php if (session()->getFlashdata('error')): ?>
           <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
         <?php endif; ?>
