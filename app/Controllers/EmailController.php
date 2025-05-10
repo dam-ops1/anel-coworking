@@ -30,7 +30,7 @@ class EmailController extends Controller
                 
         if ($this->email->send()) {
             // Mostrar mensaje de éxito
-            return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", '/', 'Iniciar Sesión');
+            return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", 'login', 'Iniciar Sesión');
         } else {
             
             // Mostrar errores en caso de fallo
@@ -48,10 +48,10 @@ class EmailController extends Controller
 
         if ($this->email->send()) {
             // Mostrar mensaje de éxito
-            return $this->messageController->showMessage("Correo Enviado", "El correo para cambiar la contraseña ha sido enviado exitosamente.", '/', 'Iniciar Sesión');
+            return $this->messageController->showMessage("Correo Enviado", "El correo para cambiar la contraseña ha sido enviado exitosamente.", 'login', 'Iniciar Sesión');
         } else {
             // Mostrar errores en caso de fallo
-            $this->messageController->showMessage("Error", "Ha ocurrido un error intentelo de nuevo más tarde.", '/', 'Iniciar Sesión');
+            $this->messageController->showMessage("Error", "Ha ocurrido un error intentelo de nuevo más tarde.", 'login', 'Iniciar Sesión');
         }
     }
 
