@@ -172,9 +172,10 @@ class AuthController extends BaseController
         $email = $this->request->getPost('email');
 
         $user = $this->userModel->where('email', $email)->first();
-        
+
         // Verificamos si el usuario existe
         if (!$user) return redirect()->back()->with('error', 'No se encontró un usuario con ese correo electrónico.');
+        if (!$user['email_verified']) return redirect()->to('login')->with('error', 'Usuario no verificado. Por favor, verifica tu cuenta antes de restablecer la contraseña.');
         
         $token = bin2hex(random_bytes(20));
         
@@ -194,6 +195,8 @@ class AuthController extends BaseController
     public function resetPassword($token)
     {
         $user = $this->userModel->where(['reset_token' => $token])->first();
+        
+        
 
         if (!$user) return redirect()->to('login')->with('error', 'Token inválido o expirado.');
 
@@ -209,6 +212,7 @@ class AuthController extends BaseController
 
     public function resetPasswordPost()
     {
+
         if (! $this->validate($this->rulesResetPassword, $this->messagesResetPassword)) {
             return redirect()->back()
                             ->withInput() 
@@ -238,6 +242,8 @@ class AuthController extends BaseController
         ]);
 
         return redirect()->to('login')->with('success', 'Contraseña actualizada exitosamente. Puedes iniciar sesión ahora.');
+
+        
     }
 
     
