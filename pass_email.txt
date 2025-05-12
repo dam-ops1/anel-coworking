@@ -1,3 +1,0 @@
-email = anelcoworking@gmail.com
-pass_email = Anel-coworking2025*
-pass_application = bsbb lciw ubmx ujua
