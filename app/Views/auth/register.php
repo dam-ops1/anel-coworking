@@ -34,7 +34,7 @@
                 <?php endif; ?>
 
                 <form action="<?= base_url('register') ?>" method="POST"
-                    onsubmit="this.querySelector('button').disabled=true; this.querySelector('button').innerText='Cargando…';">
+                    onsubmit="this.registerButton.disabled=true; this.registerButton.innerText='Cargando…'; return true;">
                     <?= csrf_field() ?>
 
                     <div class="mb-3">

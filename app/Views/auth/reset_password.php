@@ -20,39 +20,41 @@
             <img src="<?= base_url('images/icn_reset_pass.png') ?>" alt="Anel Logo" class="img-fluid"
               style="max-width:20%; height:auto;">
           </div>
+          
           <!-- Título -->
           <h4 class="text-center mb-4">Restablecer Contraseña</h4>
           <p class="text-center text-muted mb-4">Ingresa tu nueva contraseña</p>
 
-          <form action="<?= base_url('auth/reset-password') ?>" method="POST" onsubmit="this.resetPassButton.disabled=true; this.resetPassButton.innerText='Cargando…'; return true;">
+          <form action="<?= base_url('auth/reset-password') ?>" method="POST"
+            onsubmit="this.resetPassButton.disabled=true; this.resetPassButton.innerText='Cargando…'; return true;">
             <?= csrf_field() ?>
 
             <input type="hidden" name="token" value="<?= esc($token) ?>">
 
 
             <div class="form-group mb-3">
-                        <label for="password">Nueva Contraseña</label>
-                        <input type="password"
-                            class="form-control <?= (session('validation') && session('validation')->hasError('password')) ? 'is-invalid' : '' ?>"
-                            id="password" name="password" required>
-                        <?php if (session('validation') && session('validation')->hasError('password')): ?>
-                            <div class="invalid-feedback">
-                                <?= session('validation')->getError('password') ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+              <label for="password">Nueva Contraseña</label>
+              <input type="password"
+                class="form-control <?= (session('validation') && session('validation')->hasError('password')) ? 'is-invalid' : '' ?>"
+                id="password" name="password" required>
+              <?php if (session('validation') && session('validation')->hasError('password')): ?>
+                <div class="invalid-feedback">
+                  <?= session('validation')->getError('password') ?>
+                </div>
+              <?php endif; ?>
+            </div>
 
             <div class="form-group mb-3">
-                        <label for="confirm_password">Confirmar Contraseña</label>
-                        <input type="password"
-                            class="form-control <?= (session('validation') && session('validation')->hasError('confirm_password')) ? 'is-invalid' : '' ?>"
-                            id="confirm_password" name="confirm_password" required>
-                        <?php if (session('validation') && session('validation')->hasError('confirm_password')): ?>
-                            <div class="invalid-feedback">
-                                <?= session('validation')->getError('confirm_password') ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+              <label for="confirm_password">Confirmar Contraseña</label>
+              <input type="password"
+                class="form-control <?= (session('validation') && session('validation')->hasError('confirm_password')) ? 'is-invalid' : '' ?>"
+                id="confirm_password" name="confirm_password" required>
+              <?php if (session('validation') && session('validation')->hasError('confirm_password')): ?>
+                <div class="invalid-feedback">
+                  <?= session('validation')->getError('confirm_password') ?>
+                </div>
+              <?php endif; ?>
+            </div>
 
             <div class="d-grid">
               <button type="submit" class="btn btn-primary w-100" name="resetPassButton"
