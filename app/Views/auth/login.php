@@ -8,7 +8,7 @@
             <!-- IZQUIERDA: logo centrado con tamaño máximo -->
             <div class="col-12 col-md-6 col-lg-5 
                d-none d-md-flex justify-content-center align-items-center p-4">
-                <img src="<?= base_url('images/anel-logo.png') ?>" alt="Anel Logo" class="img-fluid"
+                <img src="<?= base_url('images/icn_anel_logo.png') ?>" alt="Anel Logo" class="img-fluid"
                     style="max-width: 115%; height: auto;">
             </div>
 

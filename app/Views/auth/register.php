@@ -11,7 +11,7 @@
       ">
             <!-- Logo -->
             <div class="d-none d-md-flex justify-content-center align-items-center p-4" style="flex:0 0 40%;">
-                <img src="<?= base_url('images/anel-logo.png') ?>" alt="Anel Logo" class="img-fluid"
+                <img src="<?= base_url('images/icn_anel_logo.png') ?>" alt="Anel Logo" class="img-fluid"
                     style="max-width:80%; height:auto;">
             </div>
 
