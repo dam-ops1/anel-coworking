@@ -106,6 +106,7 @@ class UserModel extends Model
 
         $this->update($user['user_id'], [
             'is_active' => 1,
+            'last_login' => date('Y-m-d H:i:s')
         ]);
 
         return $user;
