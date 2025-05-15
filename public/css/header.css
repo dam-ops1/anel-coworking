@@ -1,0 +1,22 @@
+ body {
+            background-color: #f8f9fa;
+        }
+        header {
+            background-color: #fff;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+        .nav-link-custom {
+            color: #dc3545;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-link-custom:hover {
+            color: #bd2130;
+        }
+        .profile-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 50%;
+        }

@@ -25,6 +25,9 @@ $routes->get('auth/forgot-password/(:any)', 'AuthController::resetPassword/$1');
 
 $routes->post('auth/reset-password', 'AuthController::resetPasswordPost');
 
+// perfil ruta 
+$routes->get('profile', 'ProfileController::index');
+
 
 // Message route
 $routes->get('message', 'MessageController::index');

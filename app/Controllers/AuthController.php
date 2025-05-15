@@ -73,7 +73,7 @@ class AuthController extends BaseController
 
         if ($user) {
             $this->setSession($user);
-            return redirect()->to('rooms/calendar');
+            return redirect()->to('profile');
         }
 
         return redirect()->back()
@@ -147,10 +147,12 @@ class AuthController extends BaseController
     private function setSession($userData)
     {
         $data = [
-            'isLoggedIn' => true,
-            'user_id' => $userData['user_id'],
-            'email' => $userData['email']
-        ];
+        'isLoggedIn'     => true,
+        'user_id'        => $userData['user_id'],
+        'email'          => $userData['email'],
+        'full_name'      => $userData['full_name'],  // Asegúrate de tener este campo
+        'profile_image'  => $userData['profile_image'] ?? 'default.png', // Puede venir de la DB
+    ];
 
         $this->session->set($data);
     }

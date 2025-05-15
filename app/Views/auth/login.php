@@ -43,8 +43,7 @@
         <form
           action="<?= base_url('login') ?>"
           method="post"
-          onsubmit="this.querySelector('button').disabled=true; this.querySelector('button').innerText='Cargando…';"
-        >
+          onsubmit="this.loginButton.disabled=true; this.loginButton.innerText='Cargando…'; return true;">
           <?= csrf_field() ?>
 
           <div class="mb-3">
