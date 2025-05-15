@@ -1,7 +1,7 @@
 <?php
-    $session = session();
-    $userName = $session->get('full_name');
-    $profileImage = $session->get('profile_image') ?? 'default.png';
+$session = session();
+$userName = $session->get('full_name');
+$profileImage = $session->get('profile_image') ?? 'default.png';
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light px-4 py-2 border-bottom bg-white">
@@ -27,11 +27,24 @@
                     <i class="bi bi-geo-alt me-1"></i> Servicios
                 </a>
             </li>
-            
+
             <li class="nav-item">
                 <a class="nav-link text-danger" href="<?= base_url('contacto') ?>">
                     Contacto
                 </a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle" type="button" data-coreui-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear me-1 text-danger"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="<?= base_url('users') ?>">Usuarios
+
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <!-- Avatar -->

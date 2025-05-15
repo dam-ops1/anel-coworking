@@ -31,3 +31,6 @@ $routes->get('profile', 'ProfileController::index');
 
 // Message route
 $routes->get('message', 'MessageController::index');
+
+// Usuarios ruta
+$routes->get('users', 'UserController::index');
