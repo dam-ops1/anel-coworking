@@ -126,5 +126,10 @@ class UserModel extends Model
         ]);
     }
 
-    
+    // Recibir todos los usuarios
+    public function getAllUsers()
+    {
+        return $this->orderBy('created_at', 'DESC')->findAll(); 
+    }
+
 }

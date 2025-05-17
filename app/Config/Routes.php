@@ -39,3 +39,6 @@ $routes->addRedirect('dashboard/index', 'dashboard');
 
 // Message route
 $routes->get('message', 'MessageController::index');
+
+// Usuarios ruta
+$routes->get('users', 'UserController::index');
