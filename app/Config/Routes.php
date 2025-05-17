@@ -25,8 +25,16 @@ $routes->get('auth/forgot-password/(:any)', 'AuthController::resetPassword/$1');
 
 $routes->post('auth/reset-password', 'AuthController::resetPasswordPost');
 
-// perfil ruta 
+// profile
 $routes->get('profile', 'ProfileController::index');
+
+// dashboard
+$routes->get('dashboard', 'DashboardController::index');
+// redireccionar dashboard/index a dashboard
+$routes->addRedirect('dashboard/index', 'dashboard');
+
+
+
 
 
 // Message route

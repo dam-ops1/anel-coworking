@@ -73,7 +73,7 @@ class AuthController extends BaseController
 
         if ($user) {
             $this->setSession($user);
-            return redirect()->to('profile');
+            return redirect()->to('dashboard');
         }
 
         return redirect()->back()
