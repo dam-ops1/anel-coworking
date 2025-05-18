@@ -1,0 +1,117 @@
+<?php
+$session = session();
+$isLoggedIn = $session->get('isLoggedIn') ?? false;
+$userName = $session->get('full_name') ?? 'Usuario';
+$profileImage = $session->get('profile_image');
+$userRoleId = $session->get('role') ?? 0;
+
+if (empty($profileImage)) {
+    $profileImage = 'default.png';
+}
+?>
+
+<!-- Estilos personalizados para los dropdowns -->
+<style>
+    /* Cambiar color de fondo al enfocar o pasar el mouse sobre elementos dropdown */
+    .dropdown-item:focus, 
+    .dropdown-item:hover {
+        background-color: rgba(220, 53, 69, 0.1) !important; /* Rojo (danger) con opacidad */
+        color: #dc3545 !important; /* Color de texto rojo (danger) */
+    }
+    
+    /* Cambiar el color de foco de los botones dropdown */
+    .dropdown-toggle:focus,
+    .btn:focus,
+    .btn:active,
+    .btn:active:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+        border-color: #dc3545 !important;
+    }
+    
+    /* Eliminar el borde azul en los elementos activos */
+    .dropdown-item.active, 
+    .dropdown-item:active {
+        background-color: #dc3545 !important;
+        color: white !important;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light px-4 py-2 border-bottom bg-white">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold border px-3 py-1" href="<?= base_url('dashboard') ?>">INTRACONECTA</a>
+
+        <!-- Enlaces de navegación -->
+        <ul class="navbar-nav d-flex flex-row gap-4 align-items-center">
+            <li class="nav-item">
+                <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('bookings') ?>">
+                    <i class="bi bi-calendar3 me-1"></i> Reservas
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('comunidad') ?>">
+                    <i class="bi bi-people me-1"></i> Comunidad
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('servicios') ?>">
+                    <i class="bi bi-geo-alt me-1"></i> Servicios
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-danger" href="<?= base_url('contacto') ?>">
+                    Contacto
+                </a>
+            </li>
+
+            <?php if ($isLoggedIn): ?>
+                <?php if ($userRoleId == 1): ?> 
+                <!-- Menú de administración (solo visible para administradores) -->
+                <li class="nav-item dropdown">
+                    <button class="btn dropdown-toggle" type="button" data-coreui-toggle="dropdown" aria-expanded="false">
+                        <img src="<?= base_url('/images/icn_settings.png') ?>"
+                             style="width:18px; height:18px;" class="me-1">
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="<?= base_url('users') ?>">
+                                <i class="bi bi-people-fill me-2"></i>Usuarios
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <?php endif; ?>
+
+                <!-- Avatar y nombre de usuario -->
+                <li class="nav-item dropdown ms-3">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-coreui-toggle="dropdown" aria-expanded="false">
+                        <img src="<?= base_url('/uploads/avatars/' . esc($profileImage)) ?>" alt="<?= esc($userName) ?>" 
+                             class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="<?= base_url('profile') ?>">
+                                <i class="bi bi-person-fill me-2"></i>Mi Perfil
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="<?= base_url('logout') ?>">
+                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            <?php else: ?>
+            <!-- Opciones para usuarios no autenticados -->
+            <li class="nav-item ms-3">
+                <a href="<?= base_url('login') ?>" class="btn btn-outline-danger me-2">Iniciar Sesión</a>
+                <a href="<?= base_url('register') ?>" class="btn btn-danger">Registrarse</a>
+            </li>
+            <?php endif; ?>
+        </ul>
+
+    </div>
+</nav>

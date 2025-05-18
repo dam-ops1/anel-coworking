@@ -10,7 +10,7 @@
             <p class="hero-subtitle mb-4">en Pamplona</p>
             <div class="hero-buttons">
                 <a href="#" class="btn btn-primary btn-lg me-2">Conócenos</a>
-                <a href="#" class="btn btn-outline-light btn-lg">Reserva</a>
+                <a href=" <?= base_url('bookings') ?>" class="btn btn-outline-light btn-lg">Reserva</a>
             </div>
         </div>
     </div>
@@ -146,30 +146,6 @@
                                 <a href="#" class="btn btn-primary">Inscribirse</a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Logotipos Colaboradores -->
-<section class="partners-section mt-5">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-md-3">
-                <img src="<?= base_url('images/icn_logo_anel.png') ?>" alt="ANEL Logo" class="img-fluid mb-3 mb-md-0">
-            </div>
-            <div class="col-md-9">
-                <div class="row justify-content-end align-items-center">
-                    <div class="col-4 col-md-2">
-                        <img src="<?= base_url('images/logo-gob-navarra.png') ?>" alt="Gobierno de Navarra" class="img-fluid">
-                    </div>
-                    <div class="col-4 col-md-2">
-                        <img src="<?= base_url('images/logo-eu.png') ?>" alt="European Union" class="img-fluid">
-                    </div>
-                    <div class="col-4 col-md-2">
-                        <img src="<?= base_url('images/logo-interreg.png') ?>" alt="Interreg" class="img-fluid">
                     </div>
                 </div>
             </div>

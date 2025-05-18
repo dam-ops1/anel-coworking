@@ -30,7 +30,7 @@ class EmailController extends Controller
                 
         if ($this->email->send()) {
             // Mostrar mensaje de éxito
-            return $this->messageController->showMessage("Usuario Verificado", "El usuario ha sido verificado exitosamente.", 'login', 'Iniciar Sesión');
+            return $this->messageController->showMessage("Usuario Registrado", "Usuario registrado exitosamente, verifica tu correo para activar tu cuenta.", 'login', 'Iniciar Sesión');
         } else {
             
             // Mostrar errores en caso de fallo
@@ -80,6 +80,40 @@ class EmailController extends Controller
         $body .= '<p>Si tienes alguna pregunta, no dudes en contactarnos.</p>';
         $body .= '<p>Saludos,<br>Anel Coworking</p>';
 
+        return $body;
+    }
+    
+    public function sendBookingConfirmation($to, $subject, $data)
+    {
+        $this->email->setTo($to);
+        $this->email->setSubject($subject);
+        $message = $this->getBodyBookingConfirmation($data);
+        $this->email->setMessage($message);
+
+        if ($this->email->send()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private function getBodyBookingConfirmation($data)
+    {
+        $url = base_url('bookings/confirmation/' . $data['booking_id']);
+        
+        $body = '<h1>Hola '. $data['user_name']. ', ¡Tu reserva ha sido confirmada!</h1>';
+        $body .= '<div style="padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin: 20px 0;">';
+        $body .= '<h2 style="color: #dc3545;">Detalles de la reserva</h2>';
+        $body .= '<p><strong>Sala:</strong> ' . $data['room_name'] . '</p>';
+        $body .= '<p><strong>Fecha de inicio:</strong> ' . $data['start_date'] . ' a las ' . $data['start_time'] . '</p>';
+        $body .= '<p><strong>Fecha de fin:</strong> ' . $data['end_date'] . ' a las ' . $data['end_time'] . '</p>';
+        $body .= '<p><strong>Precio total:</strong> €' . number_format($data['total_price'], 2) . '</p>';
+        $body .= '</div>';
+        $body .= "<p>Puedes ver los detalles de tu reserva en tu <a href='$url'>área personal</a>.</p>";
+        $body .= '<p>Si necesitas modificar o cancelar tu reserva, por favor ponte en contacto con nosotros lo antes posible.</p>';
+        $body .= '<p>Gracias por confiar en nosotros.</p>';
+        $body .= '<p>Saludos,<br>Anel Coworking</p>';
+        
         return $body;
     }
 }

@@ -1,0 +1,42 @@
+.construction-container {
+    text-align: center;
+    padding: 80px 20px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.construction-icon {
+    font-size: 80px;
+    color: #dc3545;
+    margin-bottom: 30px;
+    animation: pulse 2s infinite;
+}
+
+.construction-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+.construction-text {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    color: #6c757d;
+}
+
+.progress-container {
+    width: 50%;
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+.return-link {
+    margin-top: 30px;
+    transition: all 0.3s ease;
+}

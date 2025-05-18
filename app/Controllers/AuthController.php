@@ -95,18 +95,25 @@ class AuthController extends BaseController
 
     public function register(){
 
-
         // Sólo muestro el formulario si no es POST
         if ($this->request->getMethod() !== 'POST') {
             return view('auth/register');
         }
 
-
         if (! $this->validate($this->rulesRegister, $this->messagesRegister)) {
-
             return redirect()->back()
                             ->withInput() 
                             ->with('validation', $this->validator); 
+        }
+        
+        // Verificar si el email ya está registrado
+        $email = $this->request->getPost('email');
+        $existingUser = $this->userModel->where('email', $email)->first();
+        
+        if ($existingUser) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'El correo electrónico ya está registrado. Por favor, utilice otro o inicie sesión.');
         }
         
         // Creo el usuario llamando al modelo
@@ -146,13 +153,15 @@ class AuthController extends BaseController
 
     private function setSession($userData)
     {
+
         $data = [
-        'isLoggedIn'     => true,
-        'user_id'        => $userData['user_id'],
-        'email'          => $userData['email'],
-        'full_name'      => $userData['full_name'],  // Asegúrate de tener este campo
-        'profile_image'  => $userData['profile_image'] ?? 'default.png', // Puede venir de la DB
-    ];
+            'isLoggedIn'     => true,
+            'user_id'        => $userData['user_id'],
+            'email'          => $userData['email'],
+            'full_name'      => $userData['full_name'],
+            'profile_image'  => $userData['profile_image'] ?? 'default.png', // Imagen de perfil por defecto
+            'role'           => $userData['role_id'], 
+        ];
 
         $this->session->set($data);
     }
@@ -176,8 +185,16 @@ class AuthController extends BaseController
         $user = $this->userModel->where('email', $email)->first();
 
         // Verificamos si el usuario existe
-        if (!$user) return redirect()->back()->with('error', 'No se encontró un usuario con ese correo electrónico.');
-        if (!$user['email_verified']) return redirect()->to('login')->with('error', 'Usuario no verificado. Por favor, verifica tu cuenta antes de restablecer la contraseña.');
+        if (!$user) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No existe una cuenta asociada a este correo electrónico. Por favor, registre una cuenta primero.');
+        }
+        
+        if (!$user['email_verified']) {
+            return redirect()->to('login')
+                ->with('error', 'Usuario no verificado. Por favor, verifica tu cuenta antes de restablecer la contraseña.');
+        }
         
         $token = bin2hex(random_bytes(20));
         

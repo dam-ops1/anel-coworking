@@ -1,93 +1,38 @@
-<footer class="footer">
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Información de Contacto -->
-            <div class="col-md-4 mb-4 mb-md-0">
-                <h5 class="footer-title mb-4">Contacto</h5>
-                <ul class="list-unstyled contact-list">
-                    <li class="d-flex align-items-start mb-3">
-                        <i class="fas fa-map-marker-alt me-3 mt-1 contact-icon"></i>
-                        <span>Calle Rio Alzania 29<br>31004 Pamplona - Iruña</span>
-                    </li>
-                    <li class="d-flex align-items-center mb-3">
-                        <i class="fas fa-phone me-3 contact-icon"></i>
-                        <span>Tel: <a href="tel:948244200">948 24 42 00</a></span>
-                    </li>
-                    <li class="d-flex align-items-center mb-3">
-                        <i class="fas fa-envelope me-3 contact-icon"></i>
-                        <span><a href="mailto:info@anel.es">info@anel.es</a></span>
-                    </li>
-                </ul>
-                <div class="social-links mt-4">
-                    <a href="#" class="social-link" aria-label="Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Twitter">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="LinkedIn">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Enlaces Rápidos -->
-            <div class="col-md-4 mb-4 mb-md-0">
-                <h5 class="footer-title mb-4">Enlaces Rápidos</h5>
-                <div class="row">
-                    <div class="col-6">
-                        <ul class="list-unstyled footer-links">
-                            <li class="mb-2"><a href="<?= base_url('nosotros') ?>" class="footer-link">Sobre Nosotros</a></li>
-                            <li class="mb-2"><a href="<?= base_url('servicios') ?>" class="footer-link">Servicios</a></li>
-                            <li class="mb-2"><a href="<?= base_url('comunidad') ?>" class="footer-link">Comunidad</a></li>
-                            <li class="mb-2"><a href="<?= base_url('eventos') ?>" class="footer-link">Eventos</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-6">
-                        <ul class="list-unstyled footer-links">
-                            <li class="mb-2"><a href="<?= base_url('login') ?>" class="footer-link">Iniciar Sesión</a></li>
-                            <li class="mb-2"><a href="<?= base_url('register') ?>" class="footer-link">Registro</a></li>
-                            <li class="mb-2"><a href="<?= base_url('politica-privacidad') ?>" class="footer-link">Privacidad</a></li>
-                            <li class="mb-2"><a href="<?= base_url('contacto') ?>" class="footer-link">Contacto</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Newsletter -->
+<footer class="bg-white py-4 border-top mt-auto">
+    <div class="container-fluid px-4">
+        <div class="row align-items-start">
+            <!-- ANEL: Logo y ubicación -->
             <div class="col-md-4">
-                <h5 class="footer-title mb-4">Newsletter</h5>
-                <p>Suscríbete para recibir las últimas novedades y eventos de nuestro espacio.</p>
-                <form class="newsletter-form mt-4">
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Tu correo electrónico" aria-label="Tu correo electrónico" required>
-                        <button class="btn btn-primary" type="submit">
-                            Suscribirse
-                        </button>
-                    </div>
-                    <div class="form-text small text-light opacity-75">
-                        No compartimos tu correo con terceros. Consulta nuestra <a href="<?= base_url('politica-privacidad') ?>" class="text-decoration-underline">política de privacidad</a>.
-                    </div>
-                </form>
+                <img src="<?= base_url('images/icn_anel_logo.png') ?>" alt="ANEL Logo" class="img-fluid" style="max-height: 70px;">
+                <div class="mt-2">
+                    <p class="small mb-1">Calle Río Alzania, 29 Pamplona - Iruña</p>
+                    <p class="small mb-1">Tel: 948 24 04 50 | <a href="mailto:general@anel.es" class="text-decoration-none">general@anel.es</a></p>
+                </div>
+            </div>
+            
+            <!-- Gobierno de Navarra: Solo logo -->
+            <div class="col-md-4 text-center">
+                <img src="<?= base_url('images/logo-gob-navarra.svg') ?>" alt="Gobierno de Navarra" class="img-fluid" style="max-height: 70px;">
+            </div>
+            
+            <!-- Logo EU con texto del proyecto debajo -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center">
+                    <img src="<?= base_url('images/logo-eu.png') ?>" alt="Interreg POCTEFA" class="img-fluid" style="max-height: 70px;">
+                </div>
+                <p class="small mt-2 text-start" style="font-size: 0.75rem; line-height: 1.2;">
+                    El proyecto JEUNESS ha sido cofinanciado al 65 % por la Unión Europea a través del Fondo Europeo de Desarrollo Regional (FEDER) en el marco del Programa Interreg V-A España-Francia-Andorra (POCTEFA 2021-2027). El objetivo del POCTEFA es reforzar la integración económica y social de la zona fronteriza España-Francia-Andorra.
+                </p>
             </div>
         </div>
-
-        <hr class="footer-divider my-4">
-
-        <!-- Pie de Footer -->
-        <div class="row align-items-center footer-bottom">
-            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                <p class="mb-0">&copy; <?= date('Y') ?> Anel Coworking. Todos los derechos reservados.</p>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <div class="footer-logos">
-                    <img src="<?= base_url('images/logo-gob-navarra.png') ?>" alt="Gobierno de Navarra" class="me-3" height="32">
-                    <img src="<?= base_url('images/logo-eu.png') ?>" alt="European Union" class="me-3" height="32">
-                    <img src="<?= base_url('images/logo-interreg.png') ?>" alt="Interreg" height="32">
-                </div>
+        
+        <!-- Aviso legal y política de privacidad -->
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <p class="small text-muted">
+                    <a href="<?= base_url('en-construccion') ?>" class="text-decoration-none text-danger">Aviso legal</a> y 
+                    <a href="<?= base_url('en-construccion') ?>" class="text-decoration-none text-danger">política de privacidad</a>
+                </p>
             </div>
         </div>
     </div>
