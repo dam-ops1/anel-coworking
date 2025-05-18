@@ -14,11 +14,19 @@ class RoomController extends BaseController
     }
     
     /**
-     * Página principal de reservas con el botón "Open Calendar"
+     * Pantalla principal con calendario generado 100 % en servidor.
+     * Se admite query string ?offset=N (meses desplazados) y ?date=YYYY-MM-DD
+     * para permitir la navegación y la selección de fechas sin JavaScript.
      */
     public function index()
     {
-        return view('rooms/index');
+        // Cargar fechas guardadas en sesión (opcional para pre-rellenar el formulario)
+        $data = [
+            'startSelected' => session('cal_start'),
+            'endSelected'   => session('cal_end'),
+        ];
+
+        return view('rooms/index', $data);
     }
     
     /**
