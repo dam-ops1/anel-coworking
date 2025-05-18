@@ -19,16 +19,20 @@
             <form action="<?= base_url('rooms/check-availability') ?>" method="post" class="card shadow-sm p-4">
                 <h2 class="mb-4 text-center">Selecciona fecha y hora</h2>
 
-                <div class="row mb-3">
+                <div class="row mb-4">
                     <div class="col-md-6">
-                        <label class="form-label">Inicio</label>
-                        <div class="fw-bold text-primary">
+                        <div class="mb-2">
+                            <label class="form-label fw-bold fs-5">Inicio</label>
+                        </div>
+                        <div class="mb-3 fw-bold text-primary">
                             <?= $fmtDate($startSelected) ?: '—' ?>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Fin</label>
-                        <div class="fw-bold text-primary">
+                        <div class="mb-2">
+                            <label class="form-label fw-bold fs-5">Fin</label>
+                        </div>
+                        <div class="mb-3 fw-bold text-primary">
                             <?= $fmtDate($endSelected) ?: '—' ?>
                         </div>
                     </div>
@@ -37,22 +41,40 @@
                 <div class="row mb-4">
                     <div class="col-md-6 mb-3">
                         <label class="form-label" for="start_date">Fecha inicio</label>
-                        <input type="date" id="start_date" name="start_date" class="form-control" value="<?= esc($startSelected) ?>" required>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            <input type="date" id="start_date" name="start_date" 
+                                  class="form-control form-control-lg" 
+                                  value="<?= esc($startSelected) ?>" required>
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label" for="end_date">Fecha fin</label>
-                        <input type="date" id="end_date" name="end_date" class="form-control" value="<?= esc($endSelected) ?>" required>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            <input type="date" id="end_date" name="end_date" 
+                                  class="form-control form-control-lg" 
+                                  value="<?= esc($endSelected) ?>" required>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row mt-4">
-                    <div class="col-md-6">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label">Hora inicio</label>
-                        <input type="time" name="start_time" value="09:00" class="form-control">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                            <input type="time" name="start_time" value="09:00" 
+                                  class="form-control form-control-lg">
+                        </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label">Hora fin</label>
-                        <input type="time" name="end_time" value="10:00" class="form-control">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                            <input type="time" name="end_time" value="10:00" 
+                                  class="form-control form-control-lg">
+                        </div>
                     </div>
                 </div>
 
@@ -60,7 +82,7 @@
                     <div class="alert alert-danger mt-3"><?= esc(session('error')) ?></div>
                 <?php endif; ?>
 
-                <div class="d-flex justify-content-end mt-4">
+                <div class="d-flex justify-content-end mt-5">
                     <button type="submit" class="btn btn-danger">Buscar salas disponibles</button>
                 </div>
             </form>
@@ -68,47 +90,7 @@
     </div>
 </div>
 
-<style>
-    .calendar-container {
-        margin-top: 20px;
-    }
-    .calendar-table {
-        width: 100%;
-    }
-    .calendar-table th, 
-    .calendar-table td {
-        text-align: center;
-        width: 14.28%;
-        padding: 8px 4px;
-    }
-    .calendar-day {
-        cursor: pointer;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-    .calendar-day:hover {
-        background-color: rgba(220, 53, 69, 0.1);
-    }
-    .calendar-day-selected {
-        background-color: rgba(220, 53, 69, 0.7) !important;
-        color: white !important;
-    }
-    .calendar-day-range {
-        background-color: rgba(220, 53, 69, 0.3);
-        color: #333;
-    }
-    .calendar-day-disabled {
-        color: #ccc;
-        cursor: not-allowed;
-    }
-    .calendar-day-current {
-        border: 1px solid #dc3545;
-    }
-</style>
+<!-- CSS específico para formulario de reservas -->
+<link rel="stylesheet" href="<?= base_url('css/calendar.css') ?>">
 
 <?= $this->endSection() ?> 

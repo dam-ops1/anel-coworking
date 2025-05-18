@@ -1,0 +1,83 @@
+/* Estilos para el calendario y formulario de reservas */
+.calendar-container {
+    margin-top: 20px;
+}
+.calendar-table {
+    width: 100%;
+}
+.calendar-table th, 
+.calendar-table td {
+    text-align: center;
+    width: 14.28%;
+    padding: 8px 4px;
+}
+.calendar-day {
+    cursor: pointer;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.calendar-day:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+.calendar-day-selected {
+    background-color: rgba(220, 53, 69, 0.7) !important;
+    color: white !important;
+}
+.calendar-day-range {
+    background-color: rgba(220, 53, 69, 0.3);
+    color: #333;
+}
+.calendar-day-disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+.calendar-day-current {
+    border: 1px solid #dc3545;
+}
+
+/* Estilos para inputs fecha/hora */
+input[type="date"], input[type="time"] {
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+}
+
+/* Personalizar apariencia de selectores nativos */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    filter: invert(0.5);
+    opacity: 0.8;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    filter: invert(0.7);
+}
+
+/* Personalizar los inputs cuando están en focus */
+.text-primary {
+    color: var(--cui-primary) !important; /* naranja vivo */
+}
+
+/* Estilos para los inputs en focus */
+input[type="date"]:focus,
+input[type="time"]:focus,
+.form-control:focus {
+    border-color: var(--cui-primary); /* naranja vivo #FF5722 */
+    box-shadow: 0 0 0 0.25rem rgba(255, 87, 34, 0.25); /* sombra naranja */
+}
+
+/* Cambiar el color de los input-group-text */
+.input-group-text {
+    background-color: var(--cui-light); /* beige anaranjado muy claro */
+    border-color: #ced4da;
+    color: var(--cui-dark); /* naranja muy oscuro */
+} 
