@@ -77,6 +77,25 @@ function get_user_reset_password_messege(): array
     ];
 }
 
+function get_user_profile_messages() {
+    return [
+        'full_name' => [
+            'required'    => 'El nombre es obligatorio.',
+            'min_length'  => 'El nombre debe tener al menos 3 caracteres.',
+            'max_length'  => 'El nombre no puede superar los 100 caracteres.',
+        ],
+        'email' => [
+            'required'    => 'El correo es obligatorio.',
+            'valid_email' => 'Debes ingresar un correo válido.',
+            'max_length'  => 'El correo no puede superar los 100 caracteres.',
+        ],
+        'phone' => [
+            'regex_match' => 'El teléfono solo puede contener números y símbolos válidos.',
+            'max_length'  => 'El teléfono no puede superar los 20 caracteres.',
+        ],
+    ];
+}
+
 
 
 ?>

@@ -37,6 +37,14 @@ function get_user_reset_password_rules(): array
     ];
 }
 
+function get_user_profile_rules() {
+    return [
+        'full_name' => 'required|min_length[3]|max_length[100]',
+        'email'     => 'required|valid_email|max_length[100]',
+        'phone'     => 'permit_empty|regex_match[/^[0-9\-\+\s\(\)]*$/]|max_length[20]',
+    ];
+}
+
 
 
 ?>

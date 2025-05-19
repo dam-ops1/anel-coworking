@@ -12,28 +12,7 @@ if (empty($profileImage)) {
 
 <!-- Estilos personalizados para los dropdowns -->
 <style>
-    /* Cambiar color de fondo al enfocar o pasar el mouse sobre elementos dropdown */
-    .dropdown-item:focus, 
-    .dropdown-item:hover {
-        background-color: rgba(220, 53, 69, 0.1) !important; /* Rojo (danger) con opacidad */
-        color: #dc3545 !important; /* Color de texto rojo (danger) */
-    }
-    
-    /* Cambiar el color de foco de los botones dropdown */
-    .dropdown-toggle:focus,
-    .btn:focus,
-    .btn:active,
-    .btn:active:focus {
-        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
-        border-color: #dc3545 !important;
-    }
-    
-    /* Eliminar el borde azul en los elementos activos */
-    .dropdown-item.active, 
-    .dropdown-item:active {
-        background-color: #dc3545 !important;
-        color: white !important;
-    }
+
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-light px-4 py-2 border-bottom bg-white">
@@ -115,3 +94,5 @@ if (empty($profileImage)) {
 
     </div>
 </nav>
+
+<link rel="stylesheet" href="<?= base_url('/css/header.css') ?>">

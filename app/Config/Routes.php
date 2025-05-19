@@ -27,11 +27,16 @@ $routes->post('auth/reset-password', 'AuthController::resetPasswordPost');
 
 // profile
 $routes->get('profile', 'ProfileController::index');
+$routes->get('profile/edit', 'ProfileController::edit');
+$routes->post('profile/update', 'ProfileController::update');
 
 // dashboard
 $routes->get('dashboard', 'DashboardController::index');
 // redireccionar dashboard/index a dashboard
 $routes->addRedirect('dashboard/index', 'dashboard');
+
+//ruta para agregar una imagen 
+$routes->post('profile/upload-image', 'ProfileController::uploadImage');
 
 
 

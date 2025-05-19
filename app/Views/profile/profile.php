@@ -1,36 +1,63 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-
 <main class="container py-5">
-  <div class="card shadow-sm p-4">
-    <div class="row g-4">
-      <div class="col-md-3 text-center">
-        <img src="<?= base_url('uploads/avatars/' . esc($user['profile_image'] ?? 'default.png')) ?>" class="rounded-circle" style="width:100px; height:100px;">
+
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+  <?php elseif (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
+  <?php endif; ?>
+
+  <div class="card shadow-lg p-4 mx-auto" style="max-width: 900px;">
+    <div class="d-flex flex-column flex-md-row align-items-center">
+      
+      <!-- Imagen de perfil + subir -->
+      <div class="text-center me-md-4 mb-4 mb-md-0">
+        <img src="<?= base_url('uploads/avatars/' . esc($user['profile_image'] ?? 'default.png')) ?>"
+            class="rounded-circle border border-2 shadow-sm"
+            style="width: 120px; height: 120px; object-fit: cover; transition: transform 0.3s;"
+            onmouseover="this.style.transform='scale(1.05)';"
+            onmouseout="this.style.transform='scale(1)';">
+        
+        <form action="<?= site_url('profile/upload-image') ?>" method="post" enctype="multipart/form-data" class="mt-3">
+          <?= csrf_field() ?>
+          <input type="file" name="profile_image" class="form-control form-control-sm mb-2" accept="image/*" required>
+          <button type="submit" class="btn btn-sm btn-outline-primary w-100">Cambiar Imagen</button>
+        </form>
       </div>
-      <div class="col-md-9">
-        <h4 class="mb-0"><?= esc($user['full_name']) ?></h4>
-        <p class="text-muted mb-2">Usuario Registrado</p>
-        <button class="btn btn-dark btn-sm me-2">Editar Perfil</button>
-        <button class="btn btn-outline-secondary btn-sm">Cambiar Contraseña</button>
+
+      <!-- Datos principales -->
+      <div class="flex-grow-1">
+        <h3 class="mb-1"><?= esc($user['full_name']) ?></h3>
+        <p class="text-muted">Usuario registrado</p>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <a href="<?= base_url('profile/edit') ?>" class="btn btn-dark btn-sm">Editar Perfil</a>
+        </div>
       </div>
     </div>
 
     <hr class="my-4">
 
-    <div class="row g-4">
-      <div class="col-md-6">
-        <h5 class="mb-3">Información Personal</h5>
-        <div class="mb-2"><i class="bi bi-envelope me-2"></i> <?= esc($user['email']) ?></div>
-        <div class="mb-2"><i class="bi bi-telephone me-2"></i> <?= esc($user['phone']) ?></div>
-        <div class="mb-2"><i class="bi bi-calendar-check me-2"></i> Último acceso: <?= esc($user['last_login']) ?></div>
+    <div class="row">
+      <!-- Información personal -->
+      <div class="col-md-6 mb-4">
+        <h5 class="mb-3"><i class="bi bi-person me-2"></i>Información Personal</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><i class="bi bi-envelope me-2"></i><?= esc($user['email']) ?></li>
+          <li class="mb-2"><i class="bi bi-telephone me-2"></i><?= esc($user['phone']) ?></li>
+          <li class="mb-2"><i class="bi bi-calendar-check me-2"></i>Último acceso: <?= esc($user['last_login']) ?></li>
+        </ul>
       </div>
 
-      <div class="col-md-6">
-        <h5 class="mb-3">Estado</h5>
-        <div class="mb-2"><i class="bi bi-shield-check me-2"></i> Verificado: <?= $user['email_verified'] ? 'Sí' : 'No' ?></div>
-        <div class="mb-2"><i class="bi bi-toggle-on me-2"></i> Activo: <?= $user['is_active'] ? 'Sí' : 'No' ?></div>
-        <div class="mb-2"><i class="bi bi-calendar me-2"></i> Registro: <?= esc($user['created_at']) ?></div>
+      <!-- Estado de cuenta -->
+      <div class="col-md-6 mb-4">
+        <h5 class="mb-3"><i class="bi bi-activity me-2"></i>Estado de Cuenta</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><i class="bi bi-shield-check me-2"></i>Verificado: <?= $user['email_verified'] ? 'Sí' : 'No' ?></li>
+          <li class="mb-2"><i class="bi bi-toggle-on me-2"></i>Activo: <?= $user['is_active'] ? 'Sí' : 'No' ?></li>
+          <li class="mb-2"><i class="bi bi-calendar me-2"></i>Registrado desde: <?= esc($user['created_at']) ?></li>
+        </ul>
       </div>
     </div>
   </div>
