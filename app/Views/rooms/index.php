@@ -17,7 +17,12 @@
             ?>
 
             <form action="<?= base_url('rooms/check-availability') ?>" method="post" class="card shadow-sm p-4">
+                <?= csrf_field() ?>
                 <h2 class="mb-4 text-center">Selecciona fecha y hora</h2>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Las reservas solo están disponibles de lunes a viernes. No se permiten reservas en fin de semana.
+                </div>
 
                 <div class="row mb-4">
                     <div class="col-md-6">
@@ -45,7 +50,8 @@
                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                             <input type="date" id="start_date" name="start_date" 
                                   class="form-control form-control-lg" 
-                                  value="<?= esc($startSelected) ?>" required>
+                                  value="<?= esc($startSelected) ?>" 
+                                  min="<?= esc($minDate) ?>" required>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -54,7 +60,8 @@
                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                             <input type="date" id="end_date" name="end_date" 
                                   class="form-control form-control-lg" 
-                                  value="<?= esc($endSelected) ?>" required>
+                                  value="<?= esc($endSelected) ?>" 
+                                  min="<?= esc($startSelected) ?>" required>
                         </div>
                     </div>
                 </div>

@@ -85,6 +85,8 @@
                             
                             <?php if ($is_available): ?>
                                 <form action="<?= base_url('bookings/create') ?>" method="post">
+                                    <?= csrf_field() ?>
+                                    
                                     <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
                                     
                                     <div class="mb-3">

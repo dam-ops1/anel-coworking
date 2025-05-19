@@ -55,7 +55,7 @@ $routes->get('en-construccion', 'PagesConstructionController::construction');
 $routes->get('bookings', 'RoomController::index');
 $routes->post('rooms/check-availability', 'RoomController::checkAvailability');
 $routes->get('rooms/list', 'RoomController::listRooms');
-$routes->get('rooms/available', 'RoomController::checkAvailability');
+$routes->get('rooms/available', 'RoomController::showAvailableRooms');
 $routes->get('rooms/details/(:num)', 'RoomController::details/$1');
 $routes->post('bookings/create', 'BookingController::create');
 $routes->get('bookings/confirmation/(:num)', 'BookingController::confirmation/$1');

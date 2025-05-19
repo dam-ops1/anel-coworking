@@ -16,7 +16,7 @@ class RoomSeeder extends Seeder
                 'floor' => 'Planta 1',
                 'equipment' => 'Proyector, Pizarra, Videoconferencia, WiFi',
                 'price_hour' => 35.00,
-                'image' => 'room1.jpg',
+                'image' => 'room_default.jpg',
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -28,7 +28,7 @@ class RoomSeeder extends Seeder
                 'floor' => 'Planta 2',
                 'equipment' => 'Proyector, Sistema de sonido, Micrófonos, Pizarra, WiFi',
                 'price_hour' => 60.00,
-                'image' => 'room2.jpg',
+                'image' => 'room_default.jpg',
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -40,7 +40,7 @@ class RoomSeeder extends Seeder
                 'floor' => 'Planta 1',
                 'equipment' => 'Pizarras, Material de diseño, Mobiliario flexible, WiFi',
                 'price_hour' => 40.00,
-                'image' => 'room3.jpg',
+                'image' => 'room_default.jpg',
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -52,7 +52,7 @@ class RoomSeeder extends Seeder
                 'floor' => 'Planta 3',
                 'equipment' => 'Escritorio, Teléfono, WiFi',
                 'price_hour' => 20.00,
-                'image' => 'room4.jpg',
+                'image' => 'room_default.jpg',
                 'is_active' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')

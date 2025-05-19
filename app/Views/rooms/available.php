@@ -11,7 +11,7 @@
                 Desde: <?= date('d/m/Y H:i', strtotime($start_datetime)) ?><br>
                 Hasta: <?= date('d/m/Y H:i', strtotime($end_datetime)) ?>
             </p>
-            <a href="<?= base_url('bookings') ?>" class="btn btn-sm btn-outline-secondary mt-2">
+            <a href="<?= base_url('bookings?modify=1') ?>" class="btn btn-sm btn-outline-secondary mt-2">
                 <i class="bi bi-arrow-left"></i> Cambiar fechas
             </a>
         </div>

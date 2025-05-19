@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\RoomModel;
+use DateTime;
 
 class RoomController extends BaseController
 {
@@ -13,25 +14,47 @@ class RoomController extends BaseController
         $this->roomModel = new RoomModel();
     }
     
-    /**
-     * Pantalla principal con calendario generado 100 % en servidor.
-     * Se admite query string ?offset=N (meses desplazados) y ?date=YYYY-MM-DD
-     * para permitir la navegación y la selección de fechas sin JavaScript.
-     */
+
     public function index()
     {
-        // Cargar fechas guardadas en sesión (opcional para pre-rellenar el formulario)
-        $data = [
-            'startSelected' => session('cal_start'),
-            'endSelected'   => session('cal_end'),
-        ];
+        $today = date('Y-m-d');
+        
+        // Asegurarse que la fecha mínima no sea fin de semana
+        $dayOfWeek = date('w', strtotime($today));
+        if ($dayOfWeek == 0) { // Domingo
+            $today = date('Y-m-d', strtotime($today . ' +1 day')); // Lunes
+        } elseif ($dayOfWeek == 6) { // Sábado
+            $today = date('Y-m-d', strtotime($today . ' +2 days')); // Lunes
+        }
 
-        return view('rooms/index', $data);
+        $isModify = $this->request->getGet('modify');
+
+        if (! $isModify) {
+            
+            session()->remove(['cal_start', 'cal_end', 'booking_start_time', 'booking_end_time']);
+            
+            $startSelected = '';
+            $endSelected = '';
+        } else {
+            
+            $startSelected = session('cal_start') ?: $today;
+            $endSelected   = session('cal_end')   ?: $startSelected;
+            
+            if ($startSelected < $today) {
+                $startSelected = $today;
+            }
+            if ($endSelected < $startSelected) {
+                $endSelected = $startSelected;
+            }
+        }
+
+        return view('rooms/index', [
+            'startSelected' => $startSelected,
+            'endSelected'   => $endSelected,
+            'minDate'       => $today,
+        ]);
     }
     
-    /**
-     * Mostrar todas las salas
-     */
     public function listRooms()
     {
         $data['rooms'] = $this->roomModel->getActiveRooms();
@@ -39,9 +62,6 @@ class RoomController extends BaseController
         return view('rooms/list', $data);
     }
     
-    /**
-     * Comprobar disponibilidad y mostrar salas disponibles
-     */
     public function checkAvailability()
     {
         $startDate = $this->request->getPost('start_date');
@@ -49,31 +69,45 @@ class RoomController extends BaseController
         $endDate = $this->request->getPost('end_date');
         $endTime = $this->request->getPost('end_time');
         
-        // Formatear fechas para la base de datos
+        // Validar campos requeridos
+        if (empty($startDate) || empty($endDate)) {
+            return redirect()->back()
+                ->with('error', 'Debes seleccionar fechas de inicio y fin.');
+        }
+        
+        // Validar que ningún día en el rango sea fin de semana
+        $currentDate = new DateTime($startDate);
+        $endDateObj = new DateTime($endDate);
+        
+        while ($currentDate <= $endDateObj) {
+            $dayOfWeek = (int)$currentDate->format('w'); // 0 = domingo, 6 = sábado
+            
+            if ($dayOfWeek == 0 || $dayOfWeek == 6) {
+                return redirect()->back()
+                    ->with('error', 'El período seleccionado incluye fines de semana (sábado o domingo). Solo se permiten reservas en días laborables (lunes a viernes).');
+            }
+            
+            // Avanzar al siguiente día
+            $currentDate->modify('+1 day');
+        }
+        
         $startDateTime = date('Y-m-d H:i:s', strtotime("$startDate $startTime"));
         $endDateTime = date('Y-m-d H:i:s', strtotime("$endDate $endTime"));
         
-        // Validar fechas
         if (strtotime($startDateTime) >= strtotime($endDateTime)) {
             return redirect()->back()
-                           ->with('error', 'La fecha de inicio debe ser anterior a la fecha de fin.');
+                ->with('error', 'La fecha de inicio debe ser anterior a la fecha de fin.');
         }
-        
-        // Obtener salas disponibles
-        $data['rooms'] = $this->roomModel->getAvailableRooms($startDateTime, $endDateTime);
-        $data['start_datetime'] = $startDateTime;
-        $data['end_datetime'] = $endDateTime;
-        
-        // Guardar en sesión para uso posterior
+
+        session()->set('cal_start', $startDate);
+        session()->set('cal_end', $endDate);
         session()->set('booking_start_time', $startDateTime);
         session()->set('booking_end_time', $endDateTime);
-        
-        return view('rooms/available', $data);
+
+        // En lugar de renderizar la vista directamente, redirigir a una ruta GET
+        return redirect()->to('rooms/available');
     }
     
-    /**
-     * Mostrar detalles de una sala específica
-     */
     public function details($id)
     {
         $data['room'] = $this->roomModel->getRoom($id);
@@ -83,11 +117,9 @@ class RoomController extends BaseController
                            ->with('error', 'Sala no encontrada.');
         }
         
-        // Verificar si hay fechas seleccionadas en la sesión
         $data['start_datetime'] = session()->get('booking_start_time');
         $data['end_datetime'] = session()->get('booking_end_time');
         
-        // Si hay fechas, verificar disponibilidad
         if ($data['start_datetime'] && $data['end_datetime']) {
             $data['is_available'] = $this->roomModel->checkAvailability(
                 $id, 
@@ -99,5 +131,24 @@ class RoomController extends BaseController
         }
         
         return view('rooms/details', $data);
+    }
+
+    public function showAvailableRooms()
+    {
+
+        $startDateTime = session()->get('booking_start_time');
+        $endDateTime = session()->get('booking_end_time');
+        
+        if (!$startDateTime || !$endDateTime) {
+            return redirect()->to('bookings')
+                           ->with('error', 'Por favor, selecciona primero las fechas y horas.');
+        }
+        
+
+        $data['rooms'] = $this->roomModel->getAvailableRooms($startDateTime, $endDateTime);
+        $data['start_datetime'] = $startDateTime;
+        $data['end_datetime'] = $endDateTime;
+        
+        return view('rooms/available', $data);
     }
 } 

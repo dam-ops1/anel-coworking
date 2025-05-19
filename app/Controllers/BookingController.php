@@ -18,9 +18,7 @@ class BookingController extends BaseController
         $this->emailController = new EmailController();
     }
     
-    /**
-     * Mostrar las reservas del usuario actual
-     */
+
     public function index()
     {
         $userId = session()->get('user_id');
@@ -31,9 +29,7 @@ class BookingController extends BaseController
         return view('bookings/index', $data);
     }
     
-    /**
-     * Crear una nueva reserva
-     */
+
     public function create()
     {
         $roomId = $this->request->getPost('room_id');
@@ -47,7 +43,7 @@ class BookingController extends BaseController
                          ->with('error', 'Datos de reserva incompletos. Por favor, seleccione fechas y sala.');
         }
         
-        // Verificar disponibilidad
+
         $isAvailable = $this->roomModel->checkAvailability($roomId, $startDatetime, $endDatetime);
         
         if (!$isAvailable) {
@@ -55,16 +51,16 @@ class BookingController extends BaseController
                          ->with('error', 'Lo sentimos, esta sala ya no está disponible para el horario seleccionado.');
         }
         
-        // Obtener datos de la sala para calcular precio
+
         $room = $this->roomModel->getRoom($roomId);
         
-        // Calcular duración en horas
+
         $duration = (strtotime($endDatetime) - strtotime($startDatetime)) / 3600;
         
-        // Calcular precio total
+
         $totalPrice = $room['price_hour'] * $duration;
         
-        // Datos de la reserva
+
         $bookingData = [
             'user_id'     => session()->get('user_id'),
             'room_id'     => $roomId,
@@ -75,7 +71,7 @@ class BookingController extends BaseController
             'notes'       => $notes
         ];
         
-        // Crear la reserva
+
         $bookingId = $this->bookingModel->createBooking($bookingData);
         
         if (!$bookingId) {
@@ -83,23 +79,21 @@ class BookingController extends BaseController
                          ->with('error', 'Error al crear la reserva. Por favor, inténtelo de nuevo.');
         }
         
-        // Obtener datos completos de la reserva para el email
+
         $booking = $this->bookingModel->getBooking($bookingId);
         
-        // Enviar email de confirmación
+
         $this->sendConfirmationEmail($booking, $room);
         
-        // Limpiar datos de sesión
+
         session()->remove('booking_start_time');
         session()->remove('booking_end_time');
         
-        // Redireccionar a la página de confirmación
+
         return redirect()->to('bookings/confirmation/'.$bookingId);
     }
     
-    /**
-     * Mostrar la confirmación de una reserva
-     */
+
     public function confirmation($bookingId)
     {
         $booking = $this->bookingModel->getBooking($bookingId);
@@ -115,9 +109,7 @@ class BookingController extends BaseController
         return view('bookings/confirmation', $data);
     }
     
-    /**
-     * Cancelar una reserva
-     */
+
     public function cancel($bookingId)
     {
         $booking = $this->bookingModel->getBooking($bookingId);
@@ -127,28 +119,26 @@ class BookingController extends BaseController
                          ->with('error', 'Reserva no encontrada.');
         }
         
-        // Cancelar la reserva
+
         $this->bookingModel->cancelBooking($bookingId);
         
         return redirect()->to('bookings')
                        ->with('success', 'Reserva cancelada correctamente.');
     }
     
-    /**
-     * Enviar email de confirmación
-     */
+
     private function sendConfirmationEmail($booking, $room)
     {
         $userEmail = session()->get('email');
         $userName = session()->get('full_name');
         
-        // Formatear fechas para mostrar
+
         $startDate = date('d/m/Y', strtotime($booking['start_time']));
         $startTime = date('H:i', strtotime($booking['start_time']));
         $endDate = date('d/m/Y', strtotime($booking['end_time']));
         $endTime = date('H:i', strtotime($booking['end_time']));
         
-        // Datos para el email
+
         $emailData = [
             'booking_id' => $booking['booking_id'],
             'room_name' => $room['name'],
@@ -160,7 +150,7 @@ class BookingController extends BaseController
             'user_name' => $userName
         ];
         
-        // Enviar email
+
         $this->emailController->sendBookingConfirmation(
             $userEmail,
             'Confirmación de reserva - ' . $room['name'],
