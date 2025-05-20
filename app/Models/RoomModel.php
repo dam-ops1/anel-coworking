@@ -6,22 +6,53 @@ use CodeIgniter\Model;
 
 class RoomModel extends Model
 {
-    protected $table      = 'rooms';
-    protected $primaryKey = 'room_id';
-    
+    protected $table            = 'rooms';
+    protected $primaryKey       = 'room_id';
     protected $useAutoIncrement = true;
-    protected $returnType     = 'array';
-    
-    protected $allowedFields = [
-        'name', 'description', 'capacity', 'floor', 
-        'equipment', 'price_hour', 'image', 'is_active'
+    protected $returnType       = 'array';
+    protected $useSoftDeletes   = false;
+    protected $protectFields    = true;
+    protected $allowedFields    = [
+        'name',
+        'description',
+        'capacity',
+        'floor',
+        'equipment',
+        'price_hour',
+        'image',
+        'is_active'
     ];
-    
+
     // Dates
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
+    // protected $deletedField  = 'deleted_at'; // Only if useSoftDeletes is true
+
+    // Validation
+    protected $validationRules      = [
+        'name'        => 'required|min_length[3]|max_length[100]',
+        'description' => 'permit_empty|max_length[500]',
+        'capacity'    => 'permit_empty|integer|greater_than[0]',
+        'floor'       => 'permit_empty|max_length[20]',
+        'price_hour'  => 'permit_empty|decimal',
+        'is_active'   => 'permit_empty|in_list[0,1]',
+    ];
+    protected $validationMessages   = [];
+    protected $skipValidation       = false;
+    protected $cleanValidationRules = true;
+
+    // Callbacks
+    protected $allowCallbacks = true;
+    protected $beforeInsert   = [];
+    protected $afterInsert    = [];
+    protected $beforeUpdate   = [];
+    protected $afterUpdate    = [];
+    protected $beforeFind     = [];
+    protected $afterFind      = [];
+    protected $beforeDelete   = [];
+    protected $afterDelete    = [];
     
     /**
      * Obtener todas las salas activas

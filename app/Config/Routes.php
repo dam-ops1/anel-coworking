@@ -61,3 +61,28 @@ $routes->post('bookings/create', 'BookingController::create');
 $routes->get('bookings/confirmation/(:num)', 'BookingController::confirmation/$1');
 $routes->get('bookings/cancel/(:num)', 'BookingController::cancel/$1');
 $routes->get('bookings/list', 'BookingController::index');
+
+// Admin Routes for Room Management
+$routes->group('admin', static function ($routes) {
+    // Route for listing rooms and showing the create/edit form
+    $routes->get('rooms', 'RoomController::adminIndex'); 
+    // Route to show the creation form explicitly (triggered by "Crear Nueva" button)
+    $routes->get('rooms/new', 'RoomController::adminNew'); 
+    // Route to handle the submission of the new room form
+    $routes->post('rooms/create', 'RoomController::adminCreate'); 
+    // Routes for editing and updating a room
+    $routes->get('rooms/edit/(:num)', 'RoomController::adminEdit/$1');
+    $routes->post('rooms/update/(:num)', 'RoomController::adminUpdate/$1'); // Handles PUT request via _method
+    // Route for deleting a room
+    $routes->delete('rooms/delete/(:num)', 'RoomController::adminDelete/$1');
+});
+
+// Admin Routes for User Management
+$routes->group('admin', static function ($routes) {
+    $routes->get('users', 'UserController::adminIndex');
+    $routes->get('users/new', 'UserController::adminNew');
+    $routes->post('users/create', 'UserController::adminCreate');
+    $routes->get('users/edit/(:num)', 'UserController::adminEdit/$1');
+    $routes->post('users/update/(:num)', 'UserController::adminUpdate/$1'); // Handles PUT via _method
+    $routes->delete('users/delete/(:num)', 'UserController::adminDelete/$1'); // Handles DELETE via _method
+});

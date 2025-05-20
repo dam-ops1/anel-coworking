@@ -55,8 +55,13 @@ if (empty($profileImage)) {
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" href="<?= base_url('users') ?>">
+                            <a class="dropdown-item" href="<?= base_url('admin/users') ?>">
                                 <i class="bi bi-people-fill me-2"></i>Usuarios
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="<?= base_url('admin/rooms') ?>">
+                                <i class="bi bi-door-open-fill me-2"></i>Gestionar Salas
                             </a>
                         </li>
                     </ul>

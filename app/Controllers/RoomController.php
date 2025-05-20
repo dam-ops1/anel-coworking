@@ -151,4 +151,210 @@ class RoomController extends BaseController
         
         return view('rooms/available', $data);
     }
+
+    // ADMIN METHODS
+    public function adminIndex()
+    {
+        $data = [
+            'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
+            'show_form' => false // Initially, do not show the creation form
+        ];
+        return view('admin/rooms/index', $data);
+    }
+
+    public function adminNew()
+    { 
+        // This method will be called when the user clicks "Crear Nueva"
+        // It will re-render the index view but with the form visible.
+        $data = [
+            'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
+            'show_form' => true
+        ];
+        return view('admin/rooms/index', $data);
+    }
+
+    public function adminCreate()
+    {
+        $session = session();
+        $validation =  \Config\Services::validation();
+
+        $rules = [
+            'name'        => 'required|min_length[3]|max_length[100]',
+            'description' => 'permit_empty|max_length[500]',
+            'capacity'    => 'permit_empty|integer|greater_than[0]',
+            'floor'       => 'permit_empty|max_length[20]',
+            'price_hour'  => 'permit_empty|decimal',
+            'is_active'   => 'required|in_list[0,1]'
+        ];
+
+        if (!$this->validate($rules)) {
+            $session->setFlashdata('error', $validation->listErrors());
+            // Pass validation errors and input back to the form view
+            $data = [
+                'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
+                'show_form' => true, // Keep the form visible
+                'errors' => $validation->getErrors(),
+                'old_input' => $this->request->getPost()
+            ];
+            return view('admin/rooms/index', $data);
+        }
+
+        $imageFile = $this->request->getFile('image');
+        $imageName = 'default_room.png'; // Default image
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            // Generate a new secure name
+            $imageName = $imageFile->getRandomName();
+            // Move the file to the designated directory
+            try {
+                $imageFile->move(ROOTPATH . 'public/uploads/rooms', $imageName);
+            } catch (\Exception $e) {
+                $session->setFlashdata('error', 'Error uploading image: ' . $e->getMessage());
+                // Make sure to redirect to the correct admin route for new
+                return redirect()->to('admin/rooms/new')->withInput();
+            }
+        }
+
+        $data = [
+            'name'        => $this->request->getPost('name'),
+            'description' => $this->request->getPost('description'),
+            'capacity'    => $this->request->getPost('capacity'),
+            'floor'       => $this->request->getPost('floor'),
+            'equipment'   => $this->request->getPost('equipment'),
+            'price_hour'  => $this->request->getPost('price_hour'),
+            'is_active'   => $this->request->getPost('is_active'),
+            'image'       => $imageName,
+        ];
+
+        if ($this->roomModel->save($data)) {
+            $session->setFlashdata('success', 'Sala creada exitosamente.');
+            // Make sure to redirect to the correct admin route
+            return redirect()->to('admin/rooms');
+        } else {
+            $session->setFlashdata('error', 'Error al crear la sala. Por favor, inténtelo de nuevo.');
+            // Pass errors and input back to the form view
+            $data = [
+                'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
+                'show_form' => true, // Keep the form visible
+                'errors' => $this->roomModel->errors(),
+                'old_input' => $this->request->getPost()
+            ];
+            return view('admin/rooms/index', $data);
+        }
+    }
+
+    public function adminEdit($id = null)
+    {
+        $session = session();
+        $room = $this->roomModel->find($id);
+
+        if (!$room) {
+            $session->setFlashdata('error', 'Sala no encontrada.');
+            return redirect()->to('admin/rooms');
+        }
+
+        // Pass all rooms for the table and the current room for the form
+        $data = [
+            'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
+            'show_form' => true,
+            'current_room' => $room, // Data of the room to be edited
+            'errors' => session()->getFlashdata('errors'), // Pass any validation errors from a failed update attempt
+            'old_input' => session()->getFlashdata('old_input') // Pass old input from a failed update attempt
+        ];
+
+        return view('admin/rooms/index', $data);
+    }
+
+    public function adminUpdate($id = null)
+    {
+        // Logic for updating a room will go here
+        $session = session();
+        $room = $this->roomModel->find($id);
+
+        if (!$room) {
+            $session->setFlashdata('error', 'Sala no encontrada para actualizar.');
+            return redirect()->to('admin/rooms');
+        }
+
+        $validation =  \Config\Services::validation();
+        $rules = [
+            'name'        => 'required|min_length[3]|max_length[100]',
+            'description' => 'permit_empty|max_length[500]',
+            'capacity'    => 'permit_empty|integer|greater_than[0]',
+            'floor'       => 'permit_empty|max_length[20]',
+            'price_hour'  => 'permit_empty|decimal',
+            'is_active'   => 'required|in_list[0,1]'
+        ];
+
+        if (!$this->validate($rules)) {
+            $session->setFlashdata('error', $validation->listErrors());
+            // It's important to redirect back to the edit page with errors and old input
+            return redirect()->to('admin/rooms/edit/' . $id)->withInput()->with('errors', $validation->getErrors());
+        }
+
+        $imageFile = $this->request->getFile('image');
+        $imageName = $room['image']; // Keep old image by default
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            // A new image has been uploaded
+            $newImageName = $imageFile->getRandomName();
+            try {
+                $imageFile->move(ROOTPATH . 'public/uploads/rooms', $newImageName);
+                // If move is successful, delete the old image if it's not the default
+                if ($imageName && $imageName !== 'default_room.png' && file_exists(ROOTPATH . 'public/uploads/rooms/' . $imageName)) {
+                    unlink(ROOTPATH . 'public/uploads/rooms/' . $imageName);
+                }
+                $imageName = $newImageName; // Update to new image name
+            } catch (\Exception $e) {
+                $session->setFlashdata('error', 'Error al subir la nueva imagen: ' . $e->getMessage());
+                return redirect()->to('admin/rooms/edit/' . $id)->withInput();
+            }
+        }
+
+        $dataToUpdate = [
+            'name'        => $this->request->getPost('name'),
+            'description' => $this->request->getPost('description'),
+            'capacity'    => $this->request->getPost('capacity'),
+            'floor'       => $this->request->getPost('floor'),
+            'equipment'   => $this->request->getPost('equipment'),
+            'price_hour'  => $this->request->getPost('price_hour'),
+            'is_active'   => $this->request->getPost('is_active'),
+            'image'       => $imageName,
+        ];
+
+        if ($this->roomModel->update($id, $dataToUpdate)) {
+            $session->setFlashdata('success', 'Sala actualizada exitosamente.');
+            return redirect()->to('admin/rooms');
+        } else {
+            $session->setFlashdata('error', 'Error al actualizar la sala. Por favor, inténtelo de nuevo.');
+            return redirect()->to('admin/rooms/edit/' . $id)->withInput()->with('errors', $this->roomModel->errors());
+        }
+    }
+
+    public function adminDelete($id = null)
+    {
+        $session = session();
+        $room = $this->roomModel->find($id);
+
+        if (!$room) {
+            $session->setFlashdata('error', 'Sala no encontrada para eliminar.');
+            return redirect()->to('admin/rooms');
+        }
+
+        // Delete the associated image file if it's not the default one
+        $imageName = $room['image'];
+        if ($imageName && $imageName !== 'default_room.png') {
+            $imagePath = ROOTPATH . 'public/uploads/rooms/' . $imageName;
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        if ($this->roomModel->delete($id)) {
+            $session->setFlashdata('success', 'Sala eliminada exitosamente.');
+        } else {
+            $session->setFlashdata('error', 'Error al eliminar la sala. Por favor, inténtelo de nuevo.');
+        }
+        return redirect()->to('admin/rooms');
+    }
 } 

@@ -35,6 +35,29 @@ class UserModel extends Model
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
+    // Validation Rules for Admin CRUD
+    protected $validationRules = [
+        'role_id'     => 'required|integer',
+        'username'    => 'required|min_length[3]|max_length[50]|is_unique[users.username,user_id,{user_id}]',
+        'email'       => 'required|valid_email|max_length[255]|is_unique[users.email,user_id,{user_id}]',
+        'full_name'   => 'permit_empty|max_length[100]',
+        'password'    => 'permit_empty|min_length[8]|max_length[255]', // Required on create, optional on update
+        'is_active'   => 'required|in_list[0,1]',
+    ];
+
+    protected $validationMessages = [
+        'username' => [
+            'is_unique' => 'El nombre de usuario ya existe.'
+        ],
+        'email' => [
+            'is_unique' => 'El correo electrónico ya está registrado.',
+            'valid_email' => 'Por favor, introduce un correo electrónico válido.'
+        ],
+        'password' => [
+            'min_length' => 'La contraseña debe tener al menos 8 caracteres.'
+        ]
+    ];
+
     public function createUser($userData)
     {
         
