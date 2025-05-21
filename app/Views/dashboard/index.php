@@ -9,7 +9,7 @@
                 el crecimiento sostenible</h1>
             <p class="hero-subtitle mb-4">en Pamplona</p>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-primary btn-lg me-2">Conócenos</a>
+                <a href="<?= base_url('en-construccion') ?>" class="btn btn-primary btn-lg me-2">Conócenos</a>
                 <a href=" <?= base_url('bookings') ?>" class="btn btn-outline-light btn-lg">Reserva</a>
             </div>
         </div>
@@ -29,7 +29,7 @@
                         </div>
                         <h3 class="card-title">Gestión de recursos</h3>
                         <p class="card-text flex-grow-1">Reserva sala de reuniones, espacios de trabajo y recursos compartidos.</p>
-                        <a href="#" class="btn btn-primary mt-3">Reservar ahora</a>
+                        <a href="<?= base_url('bookings') ?>" class="btn btn-primary mt-3">Reservar ahora</a>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                         </div>
                         <h3 class="card-title">Comunidad</h3>
                         <p class="card-text flex-grow-1">Conecta con otros emprendedores y empresas del ecosistema.</p>
-                        <a href="#" class="btn btn-primary mt-3">Explorar más</a>
+                        <a href="<?= base_url('en-construccion') ?>" class="btn btn-primary mt-3">Explorar más</a>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                         </div>
                         <h3 class="card-title">Servicios Anel</h3>
                         <p class="card-text flex-grow-1">Accede a servicios de consultoría, formación y otros elementos.</p>
-                        <a href="#" class="btn btn-primary mt-3">Ver Servicios</a>
+                        <a href="<?= base_url('en-construccion') ?>" class="btn btn-primary mt-3">Ver Servicios</a>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
         <div class="row">
             <div class="col-md-4 mb-4">
                 <p class="text-medium-emphasis">Descubre todas las actividades y eventos programados en nuestro espacio.</p>
-                <a href="#" class="btn btn-outline-primary">
+                <a href="<?= base_url('en-construccion') ?>" class="btn btn-outline-primary">
                     Ver próximos eventos
                 </a>
             </div>
@@ -95,7 +95,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 text-md-end">
-                                <a href="#" class="btn btn-primary">Inscribirse</a>
+                                <a href<?= base_url('en-construccion') ?>" class="btn btn-primary">Inscribirse</a>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 text-md-end">
-                                <a href="#" class="btn btn-primary">Inscribirse</a>
+                                <a href="<?= base_url('en-construccion') ?>" class="btn btn-primary">Inscribirse</a>
                             </div>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 text-md-end">
-                                <a href="#" class="btn btn-primary">Inscribirse</a>
+                                <a href="<?= base_url('en-construccion') ?>" class="btn btn-primary">Inscribirse</a>
                             </div>
                         </div>
                     </div>

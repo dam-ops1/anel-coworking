@@ -29,18 +29,18 @@ if (empty($profileImage)) {
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('comunidad') ?>">
+                <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('en-construccion') ?>">
                     <i class="bi bi-people me-1"></i> Comunidad
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('servicios') ?>">
+                <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('en-construccion') ?>">
                     <i class="bi bi-geo-alt me-1"></i> Servicios
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link text-danger" href="<?= base_url('contacto') ?>">
+                <a class="nav-link text-danger" href="<?= base_url('en-construccion') ?>">
                     Contacto
                 </a>
             </li>
@@ -89,11 +89,6 @@ if (empty($profileImage)) {
                     </ul>
                 </li>
             <?php else: ?>
-            <!-- Opciones para usuarios no autenticados -->
-            <li class="nav-item ms-3">
-                <a href="<?= base_url('login') ?>" class="btn btn-outline-danger me-2">Iniciar Sesión</a>
-                <a href="<?= base_url('register') ?>" class="btn btn-danger">Registrarse</a>
-            </li>
             <?php endif; ?>
         </ul>
 
