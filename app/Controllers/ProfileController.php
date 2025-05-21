@@ -41,28 +41,6 @@ class ProfileController extends BaseController
             'user' => $user
         ]);
     }
-
-    public function uploadImage()
-    {
-        $file = $this->request->getFile('profile_image');
-
-        if ($file && $file->isValid() && !$file->hasMoved()) {
-            // Validar tipo y tamaño si lo deseas
-            $newName = $file->getRandomName();
-            $file->move(FCPATH . 'uploads/avatars/', $newName);
-
-            // Actualizar el nombre del archivo en la base de datos del usuario
-            $userId = session()->get('user_id');
-            $this->userModel->update($userId, ['profile_image' => $newName]);
-
-            session()->set('profile_image', $newName);
-
-            return redirect()->back()->with('success', 'Imagen actualizada correctamente.');
-        }
-
-        return redirect()->back()->with('error', 'Hubo un error al subir la imagen.');
-    }
-
     
     public function edit()
     {
@@ -74,7 +52,6 @@ class ProfileController extends BaseController
 
     public function update()
     {
-
         $userId = session()->get('user_id');
 
         $rules = get_user_profile_rules();
@@ -92,9 +69,48 @@ class ProfileController extends BaseController
             'phone'     => $this->request->getPost('phone'),
         ];
 
-        $this->userModel->update($userId, $data);
+        // Procesar la imagen si se ha subido una
+        $file = $this->request->getFile('profile_image');
+        $imageUpdated = false;
+        
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Validar tipo y tamaño
+            $newName = $file->getRandomName();
+            $file->move(FCPATH . 'uploads/avatars/', $newName);
 
-        return redirect()->to('profile')->with('success', 'Perfil actualizado correctamente.');
+            // Añadir la imagen al array de datos a actualizar
+            $data['profile_image'] = $newName;
+            $imageUpdated = true;
+            
+            // Actualizar la sesión con la nueva imagen
+            session()->set('profile_image', $newName);
+        }
+
+        // Actualizar los datos del usuario
+        $result = $this->userModel->skipValidation(true)->update($userId, $data);
+        
+        if ($result) {
+            // Si la imagen fue actualizada, necesitamos asegurarnos de que la sesión se actualice correctamente
+            if ($imageUpdated) {
+                // Volver a cargar los datos del usuario para asegurarnos de tener la información más reciente
+                $updatedUser = $this->userModel->find($userId);
+                
+                // Actualizar la información de la sesión
+                session()->set([
+                    'profile_image' => $updatedUser['profile_image'],
+                    'full_name' => $updatedUser['full_name'],
+                    'email' => $updatedUser['email']
+                ]);
+                
+                // Forzar que la sesión se guarde inmediatamente
+                session()->markAsTempdata('profile_refresh', 1, 300); // Marcar que hubo un cambio de perfil
+            }
+            
+            // Redirigir a la página de perfil con un parámetro para forzar la recarga completa
+            return redirect()->to('profile?refresh=' . time())->with('success', 'Perfil actualizado correctamente.');
+        } else {
+            return redirect()->back()->with('error', 'Hubo un error al actualizar el perfil.');
+        }
     }
 
 }

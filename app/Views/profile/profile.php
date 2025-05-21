@@ -12,19 +12,17 @@
   <div class="card shadow-lg p-4 mx-auto" style="max-width: 900px;">
     <div class="d-flex flex-column flex-md-row align-items-center">
       
-      <!-- Imagen de perfil + subir -->
+      <!-- Imagen de perfil -->
+      <?php
+        $sessionImage = session()->get('profile_image');
+        $profileImg = !empty($sessionImage) ? $sessionImage : ($user['profile_image'] ?? 'default.png');
+      ?>
       <div class="text-center me-md-4 mb-4 mb-md-0">
-        <img src="<?= base_url('uploads/avatars/' . esc($user['profile_image'] ?? 'default.png')) ?>"
+        <img src="<?= base_url('uploads/avatars/' . esc($profileImg)) . '?v=' . time() ?>"
             class="rounded-circle border border-2 shadow-sm"
             style="width: 120px; height: 120px; object-fit: cover; transition: transform 0.3s;"
             onmouseover="this.style.transform='scale(1.05)';"
             onmouseout="this.style.transform='scale(1)';">
-        
-        <form action="<?= site_url('profile/upload-image') ?>" method="post" enctype="multipart/form-data" class="mt-3">
-          <?= csrf_field() ?>
-          <input type="file" name="profile_image" class="form-control form-control-sm mb-2" accept="image/*" required>
-          <button type="submit" class="btn btn-sm btn-outline-primary w-100">Cambiar Imagen</button>
-        </form>
       </div>
 
       <!-- Datos principales -->

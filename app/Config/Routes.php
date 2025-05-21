@@ -63,7 +63,7 @@ $routes->get('bookings/cancel/(:num)', 'BookingController::cancel/$1');
 $routes->get('bookings/list', 'BookingController::index');
 
 // Admin Routes for Room Management
-$routes->group('admin', static function ($routes) {
+$routes->group('admin', ['filter' => 'auth'], static function ($routes) {
     // Route for listing rooms and showing the create/edit form
     $routes->get('rooms', 'RoomController::adminIndex'); 
     // Route to show the creation form explicitly (triggered by "Crear Nueva" button)
@@ -78,7 +78,7 @@ $routes->group('admin', static function ($routes) {
 });
 
 // Admin Routes for User Management
-$routes->group('admin', static function ($routes) {
+$routes->group('admin', ['filter' => 'auth'], static function ($routes) {
     $routes->get('users', 'UserController::adminIndex');
     $routes->get('users/new', 'UserController::adminNew');
     $routes->post('users/create', 'UserController::adminCreate');

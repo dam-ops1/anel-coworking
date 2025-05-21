@@ -153,17 +153,31 @@ class AuthController extends BaseController
 
     private function setSession($userData)
     {
+        // Asegurar que el valor de profile_image sea válido
+        $profileImage = 'default.png';
+        if (!empty($userData['profile_image'])) {
+            // Verificar si el archivo existe
+            $imagePath = FCPATH . 'uploads/avatars/' . $userData['profile_image'];
+            if (file_exists($imagePath)) {
+                $profileImage = $userData['profile_image'];
+            }
+        }
 
         $data = [
             'isLoggedIn'     => true,
             'user_id'        => $userData['user_id'],
             'email'          => $userData['email'],
             'full_name'      => $userData['full_name'],
-            'profile_image'  => $userData['profile_image'] ?? 'default.png', // Imagen de perfil por defecto
+            'profile_image'  => $profileImage,
             'role'           => $userData['role_id'], 
         ];
 
         $this->session->set($data);
+        
+        // Actualizar el último acceso del usuario
+        $this->userModel->update($userData['user_id'], [
+            'last_login' => date('Y-m-d H:i:s')
+        ]);
     }
 
     public function forgotPasswordView()

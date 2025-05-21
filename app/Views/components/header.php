@@ -4,10 +4,15 @@ $isLoggedIn = $session->get('isLoggedIn') ?? false;
 $userName = $session->get('full_name') ?? 'Usuario';
 $profileImage = $session->get('profile_image');
 $userRoleId = $session->get('role') ?? 0;
+$refreshParam = $session->has('profile_refresh') ? time() : '';
 
+// Asegurar que tengamos una imagen válida
 if (empty($profileImage)) {
     $profileImage = 'default.png';
 }
+
+// Ruta completa a la imagen con parámetro anti-caché
+$profileImageUrl = base_url('/uploads/avatars/' . esc($profileImage)) . '?nocache=' . time() . '&r=' . $refreshParam;
 ?>
 
 <!-- Estilos personalizados para los dropdowns -->
@@ -56,7 +61,7 @@ if (empty($profileImage)) {
                     <ul class="dropdown-menu">
                         <li>
                             <a class="dropdown-item" href="<?= base_url('admin/users') ?>">
-                                <i class="bi bi-people-fill me-2"></i>Usuarios
+                                <i class="bi bi-people-fill me-2"></i>Gestionar Usuarios
                             </a>
                         </li>
                         <li>
@@ -71,7 +76,7 @@ if (empty($profileImage)) {
                 <!-- Avatar y nombre de usuario -->
                 <li class="nav-item dropdown ms-3">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-coreui-toggle="dropdown" aria-expanded="false">
-                        <img src="<?= base_url('/uploads/avatars/' . esc($profileImage)) ?>" alt="<?= esc($userName) ?>" 
+                        <img src="<?= $profileImageUrl ?>" alt="<?= esc($userName) ?>" 
                              class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="userDropdown">

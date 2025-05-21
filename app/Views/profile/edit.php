@@ -12,8 +12,27 @@
       <div class="alert alert-success"><?= esc($msg) ?></div>
     <?php endif; ?>
 
-    <form action="<?= base_url('profile/update') ?>" method="post">
+    <form action="<?= base_url('profile/update') ?>" method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
+      
+      <?php
+        $sessionImage = session()->get('profile_image');
+        $profileImg = !empty($sessionImage) ? $sessionImage : ($user['profile_image'] ?? 'default.png');
+      ?>
+      <div class="text-center mb-4">
+        <img src="<?= base_url('uploads/avatars/' . esc($profileImg)) . '?v=' . time() ?>"
+            class="rounded-circle border border-2 shadow-sm"
+            style="width: 120px; height: 120px; object-fit: cover; transition: transform 0.3s;"
+            onmouseover="this.style.transform='scale(1.05)';"
+            onmouseout="this.style.transform='scale(1)';">
+        
+        <div class="mt-3 mb-4">
+          <label for="profile_image" class="form-label">Imagen de perfil</label>
+          <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*">
+          <div class="form-text">Selecciona una imagen solo si deseas cambiarla</div>
+        </div>
+      </div>
+
       <div class="mb-3">
         <label for="full_name" class="form-label">Nombre completo</label>
         <input

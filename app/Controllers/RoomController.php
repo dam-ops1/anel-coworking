@@ -156,27 +156,24 @@ class RoomController extends BaseController
     public function adminIndex()
     {
         $data = [
-            'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
-            'show_form' => false // Initially, do not show the creation form
+            'rooms' => $this->roomModel->orderBy('name', 'ASC')->limit(10)->findAll()
         ];
-        return view('admin/rooms/index', $data);
+        return view('admin/rooms/list', $data);
     }
 
     public function adminNew()
     { 
-        // This method will be called when the user clicks "Crear Nueva"
-        // It will re-render the index view but with the form visible.
         $data = [
-            'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
-            'show_form' => true
+            'errors' => [],
+            'current_room' => null
         ];
-        return view('admin/rooms/index', $data);
+        return view('admin/rooms/form', $data);
     }
 
     public function adminCreate()
     {
         $session = session();
-        $validation =  \Config\Services::validation();
+        $validation = \Config\Services::validation();
 
         $rules = [
             'name'        => 'required|min_length[3]|max_length[100]',
@@ -188,15 +185,15 @@ class RoomController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            $session->setFlashdata('error', $validation->listErrors());
+            $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
             // Pass validation errors and input back to the form view
             $data = [
-                'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
-                'show_form' => true, // Keep the form visible
                 'errors' => $validation->getErrors(),
-                'old_input' => $this->request->getPost()
+                'current_room' => null
             ];
-            return view('admin/rooms/index', $data);
+            // Conservar datos de input anterior
+            session()->setFlashdata('old_input', $this->request->getPost());
+            return view('admin/rooms/form', $data);
         }
 
         $imageFile = $this->request->getFile('image');
@@ -210,8 +207,7 @@ class RoomController extends BaseController
                 $imageFile->move(ROOTPATH . 'public/uploads/rooms', $imageName);
             } catch (\Exception $e) {
                 $session->setFlashdata('error', 'Error uploading image: ' . $e->getMessage());
-                // Make sure to redirect to the correct admin route for new
-                return redirect()->to('admin/rooms/new')->withInput();
+                return redirect()->to('admin/rooms/new');
             }
         }
 
@@ -228,18 +224,15 @@ class RoomController extends BaseController
 
         if ($this->roomModel->save($data)) {
             $session->setFlashdata('success', 'Sala creada exitosamente.');
-            // Make sure to redirect to the correct admin route
             return redirect()->to('admin/rooms');
         } else {
             $session->setFlashdata('error', 'Error al crear la sala. Por favor, inténtelo de nuevo.');
-            // Pass errors and input back to the form view
             $data = [
-                'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
-                'show_form' => true, // Keep the form visible
                 'errors' => $this->roomModel->errors(),
-                'old_input' => $this->request->getPost()
+                'current_room' => null
             ];
-            return view('admin/rooms/index', $data);
+            session()->setFlashdata('old_input', $this->request->getPost());
+            return view('admin/rooms/form', $data);
         }
     }
 
@@ -253,21 +246,22 @@ class RoomController extends BaseController
             return redirect()->to('admin/rooms');
         }
 
-        // Pass all rooms for the table and the current room for the form
         $data = [
-            'rooms' => $this->roomModel->orderBy('name', 'ASC')->findAll(),
-            'show_form' => true,
-            'current_room' => $room, // Data of the room to be edited
-            'errors' => session()->getFlashdata('errors'), // Pass any validation errors from a failed update attempt
-            'old_input' => session()->getFlashdata('old_input') // Pass old input from a failed update attempt
+            'current_room' => $room,
+            'errors' => session()->getFlashdata('errors')
         ];
 
-        return view('admin/rooms/index', $data);
+        // Si hay datos de input anterior, usarlos
+        $oldInput = session()->getFlashdata('old_input');
+        if ($oldInput) {
+            $data['old_input'] = $oldInput;
+        }
+
+        return view('admin/rooms/form', $data);
     }
 
     public function adminUpdate($id = null)
     {
-        // Logic for updating a room will go here
         $session = session();
         $room = $this->roomModel->find($id);
 
@@ -276,7 +270,7 @@ class RoomController extends BaseController
             return redirect()->to('admin/rooms');
         }
 
-        $validation =  \Config\Services::validation();
+        $validation = \Config\Services::validation();
         $rules = [
             'name'        => 'required|min_length[3]|max_length[100]',
             'description' => 'permit_empty|max_length[500]',
@@ -287,9 +281,11 @@ class RoomController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
-            $session->setFlashdata('error', $validation->listErrors());
-            // It's important to redirect back to the edit page with errors and old input
-            return redirect()->to('admin/rooms/edit/' . $id)->withInput()->with('errors', $validation->getErrors());
+            $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
+            // Almacenar errores y datos de entrada para la vista
+            session()->setFlashdata('errors', $validation->getErrors());
+            session()->setFlashdata('old_input', $this->request->getPost());
+            return redirect()->to('admin/rooms/edit/' . $id);
         }
 
         $imageFile = $this->request->getFile('image');
@@ -307,7 +303,7 @@ class RoomController extends BaseController
                 $imageName = $newImageName; // Update to new image name
             } catch (\Exception $e) {
                 $session->setFlashdata('error', 'Error al subir la nueva imagen: ' . $e->getMessage());
-                return redirect()->to('admin/rooms/edit/' . $id)->withInput();
+                return redirect()->to('admin/rooms/edit/' . $id);
             }
         }
 
@@ -327,7 +323,9 @@ class RoomController extends BaseController
             return redirect()->to('admin/rooms');
         } else {
             $session->setFlashdata('error', 'Error al actualizar la sala. Por favor, inténtelo de nuevo.');
-            return redirect()->to('admin/rooms/edit/' . $id)->withInput()->with('errors', $this->roomModel->errors());
+            session()->setFlashdata('errors', $this->roomModel->errors());
+            session()->setFlashdata('old_input', $this->request->getPost());
+            return redirect()->to('admin/rooms/edit/' . $id);
         }
     }
 

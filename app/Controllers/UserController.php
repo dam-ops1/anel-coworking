@@ -22,34 +22,27 @@ class UserController extends BaseController
 
     public function adminIndex()
     {
-            $data = [
-                // Modificamos la consulta para evitar el error
-                'users' => $this->userModel->findAll(),
-                'show_form' => false
-            ];
+        $data = [
+            'users' => $this->userModel->limit(10)->findAll()
+        ];
 
-            // Si tenemos roles, los agregamos separadamente
-            $data['users'] = $this->addRoleNamesToUsers($data['users']);
+        // Si tenemos roles, los agregamos separadamente
+        $data['users'] = $this->addRoleNamesToUsers($data['users']);
 
-            return view('admin/users/index', $data);
+        return view('admin/users/list', $data);
     }
 
     public function adminNew()
     {
         try {
             $data = [
-                'users' => $this->userModel->findAll(),
                 'roles' => $this->roleModel->findAll(),
-                'show_form' => true,
                 'current_user' => null, 
                 'errors' => session()->getFlashdata('errors'),
                 'old_input' => session()->getFlashdata('old_input')
             ];
 
-            // Si tenemos roles, los agregamos separadamente
-            $data['users'] = $this->addRoleNamesToUsers($data['users']);
-
-            return view('admin/users/index', $data);
+            return view('admin/users/form', $data);
         } catch (\Exception $e) {
             return $this->handleException($e, 'admin/users');
         }
@@ -97,9 +90,12 @@ class UserController extends BaseController
 
         if (!$this->validate($validationRules)) {
             $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
-            return redirect()->to('admin/users/new')
-                             ->withInput()
-                             ->with('errors', $this->validator->getErrors());
+            
+            // Guardar los datos enviados y los errores para el formulario
+            session()->setFlashdata('old_input', $this->request->getPost());
+            session()->setFlashdata('errors', $this->validator->getErrors());
+            
+            return redirect()->to('admin/users/new');
         }
 
         // Generate activation token
@@ -111,8 +107,7 @@ class UserController extends BaseController
             'email'       => $this->request->getPost('email'),
             'full_name'   => $this->request->getPost('full_name'),
             'is_active'   => $this->request->getPost('is_active'),
-            'profile_image' => 'default.jpg', // As per requirement
-            'email_verified' => 0, // Users created by admin are not auto-verified
+            'email_verified' => 0,
             'activation_token' => $activationToken
         ];
 
@@ -138,9 +133,12 @@ class UserController extends BaseController
             return redirect()->to('admin/users');
         } else {
             $session->setFlashdata('error', 'Error al crear el usuario. Por favor, inténtelo de nuevo.');
-            return redirect()->to('admin/users/new')
-                             ->withInput()
-                             ->with('errors', $this->userModel->errors());
+            
+            // Guardar los datos enviados y los errores para el formulario
+            session()->setFlashdata('old_input', $this->request->getPost());
+            session()->setFlashdata('errors', $this->userModel->errors());
+            
+            return redirect()->to('admin/users/new');
         }
     }
 
@@ -154,19 +152,14 @@ class UserController extends BaseController
             return redirect()->to('admin/users');
         }
 
-            $data = [
-                'users' => $this->userModel->findAll(),
-                'roles' => $this->roleModel->findAll(),
-                'show_form' => true,
-                'current_user' => $user,
-                'errors' => session()->getFlashdata('errors'), 
-                'old_input' => session()->getFlashdata('old_input') 
-            ];
+        $data = [
+            'roles' => $this->roleModel->findAll(),
+            'current_user' => $user,
+            'errors' => session()->getFlashdata('errors'),
+            'old_input' => session()->getFlashdata('old_input')
+        ];
 
-            // Si tenemos roles, los agregamos separadamente
-            $data['users'] = $this->addRoleNamesToUsers($data['users']);
-
-            return view('admin/users/index', $data);
+        return view('admin/users/form', $data);
     }
 
     public function adminUpdate($id = null)
@@ -187,9 +180,12 @@ class UserController extends BaseController
 
         if (!$this->validate($validationRules)) {
             $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
-            return redirect()->to('admin/users/edit/' . $id)
-                             ->withInput()
-                             ->with('errors', $this->validator->getErrors());
+            
+            // Guardar los datos enviados y los errores para el formulario
+            session()->setFlashdata('errors', $this->validator->getErrors());
+            session()->setFlashdata('old_input', $this->request->getPost());
+            
+            return redirect()->to('admin/users/edit/' . $id);
         }
 
         $dataToUpdate = [
@@ -198,28 +194,69 @@ class UserController extends BaseController
             'email'       => $this->request->getPost('email'),
             'full_name'   => $this->request->getPost('full_name'),
             'is_active'   => $this->request->getPost('is_active'),
-            // profile_image is not updated here as per requirement
         ];
 
         // Update password only if provided
         $password = $this->request->getPost('password');
         if (!empty($password)) {
             if (strlen($password) < 8) {
-                 return redirect()->to('admin/users/edit/' . $id)
-                             ->withInput()
-                             ->with('errors', ['password' => 'La contraseña debe tener al menos 8 caracteres.']);
+                $session->setFlashdata('errors', ['password' => 'La contraseña debe tener al menos 8 caracteres.']);
+                session()->setFlashdata('old_input', $this->request->getPost());
+                return redirect()->to('admin/users/edit/' . $id);
             }
             $dataToUpdate['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
+        // Procesar la imagen si se ha subido una
+        $file = $this->request->getFile('profile_image');
+        $imageUpdated = false;
+        
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Validar tipo y tamaño
+            $newName = $file->getRandomName();
+            $file->move(FCPATH . 'uploads/avatars/', $newName);
+
+            // Añadir la imagen al array de datos a actualizar
+            $dataToUpdate['profile_image'] = $newName;
+            $imageUpdated = true;
+        }
+
+        $currentUserId = session()->get('user_id');
+        $isCurrentUser = ($id == $currentUserId);
+
         if ($this->userModel->update($id, $dataToUpdate)) {
+            // Si se actualizó la imagen y es el usuario actual, actualizar la sesión
+            if ($imageUpdated && $isCurrentUser) {
+                // Obtener datos actualizados del usuario
+                $updatedUser = $this->userModel->find($id);
+                
+                // Actualizar la sesión
+                session()->set([
+                    'profile_image' => $updatedUser['profile_image'],
+                    'full_name' => $updatedUser['full_name'],
+                    'email' => $updatedUser['email']
+                ]);
+                
+                // Forzar que la sesión se guarde inmediatamente
+                session()->markAsTempdata('profile_refresh', 1, 300);
+            }
+            
             $session->setFlashdata('success', 'Usuario actualizado exitosamente.');
-            return redirect()->to('admin/users');
+            
+            // Si es el usuario actual, añadir un parámetro para forzar la recarga completa
+            if ($isCurrentUser) {
+                return redirect()->to('admin/users?refresh=' . time());
+            } else {
+                return redirect()->to('admin/users');
+            }
         } else {
             $session->setFlashdata('error', 'Error al actualizar el usuario. Por favor, inténtelo de nuevo.');
-            return redirect()->to('admin/users/edit/' . $id)
-                             ->withInput()
-                             ->with('errors', $this->userModel->errors());
+            
+            // Guardar los datos enviados y los errores para el formulario
+            session()->setFlashdata('errors', $this->userModel->errors());
+            session()->setFlashdata('old_input', $this->request->getPost());
+            
+            return redirect()->to('admin/users/edit/' . $id);
         }
     }
 
