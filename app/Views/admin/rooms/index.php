@@ -43,6 +43,7 @@
                     <?php endif; ?>
                 </div>
                 <div class="card-body">
+                    <div style="max-height: 400px; overflow-y: auto;">
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -94,6 +95,7 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
             </div>
         </div>
 

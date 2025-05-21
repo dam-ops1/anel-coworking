@@ -14,6 +14,7 @@
 <body>
     <?= $this->renderSection('content') ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.3.1/dist/js/coreui.bundle.min.js" integrity="sha384-8QmUFX1sl4cMveCP2+H1tyZlShMi1LeZCJJxTZeXDxOwQexlDdRLQ3O9L78gwBbe" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.0/dist/js/coreui.min.js" integrity="sha384-VlLkV9lXrXUjf40eVjPyWh+2xj8u+Yo+xW8JqHvMYm93rurFKip37OtfOzqiyMgd" crossorigin="anonymous"></script>
 </body>
 </html> 
