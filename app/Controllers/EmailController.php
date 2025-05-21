@@ -55,7 +55,31 @@ class EmailController extends Controller
         }
     }
 
-    
+    public function sendEmailToActivateAndSetPassword($to, $subject, $user, $token)
+    {
+        $this->email->setTo($to);
+        $this->email->setSubject($subject);
+        $message = $this->getBodyActivateAndSetPassword($user, $token);
+        $this->email->setMessage($message);
+
+        if ($this->email->send()) {
+            // Mostrar mensaje de éxito
+            return $this->messageController->showMessage(
+                "Usuario Creado", 
+                "El usuario ha sido creado exitosamente y se le ha enviado un correo para verificar su cuenta y establecer una contraseña.", 
+                'admin/users', 
+                'Ver Usuarios'
+            );
+        } else {
+            // Mostrar errores en caso de fallo
+            return $this->messageController->showMessage(
+                "Error", 
+                "El usuario se creó pero hubo un problema al enviar el correo. Por favor, intente enviar el correo nuevamente.", 
+                'admin/users', 
+                'Ver Usuarios'
+            );
+        }
+    }
 
     private function getBogyRegister($user)
     {
@@ -63,8 +87,10 @@ class EmailController extends Controller
 
         $body = '<h1>Hola '. $user['username']. ', Bienvenido a Anel Coworking</h1>';
         $body .= '<p>Gracias por registrarte. Tu cuenta ha sido creada exitosamente.</p>';
-        $body .= "<p>Por favor, verifica tu correo electrónico para activar tu cuenta. <a href='$url'>Activa tu Cuenta</a> </p>";
-        $body .= '<p>Si tienes alguna pregunta, no dudes en contactarnos.</p>';
+        $body .= '<p>Para completar tu registro, debes verificar tu correo electrónico y establecer una contraseña segura para tu cuenta.</p>';
+        $body .= "<p>Por favor, haz clic en el siguiente enlace para activar tu cuenta y establecer tu contraseña: <a href='$url'>Activar mi cuenta</a></p>";
+        $body .= '<p>Este enlace caducará en 24 horas. Si no completas el registro en este tiempo, deberás solicitar un nuevo enlace de activación.</p>';
+        $body .= '<p>Si no has solicitado esta cuenta, puedes ignorar este correo.</p>';
         $body .= '<p>Saludos,<br>Anel Coworking</p>';
 
         return $body;
@@ -78,6 +104,24 @@ class EmailController extends Controller
         $body .= '<p>Si no has solicitado este cambio, ignora este mensaje.</p>';
         $body .= "<p>Para restablecer tu contraseña, haz clic en el siguiente enlace: <a href='$url'>Restablecer Contraseña</a></p>";
         $body .= '<p>Si tienes alguna pregunta, no dudes en contactarnos.</p>';
+        $body .= '<p>Saludos,<br>Anel Coworking</p>';
+
+        return $body;
+    }
+
+    private function getBodyActivateAndSetPassword($user, $token)
+    {
+        $url = base_url('auth/reset-password/' . $token);
+
+        $body = '<h1>Bienvenido/a a Anel Coworking</h1>';
+        $body .= '<p>Hola ' . ($user['full_name'] ?: $user['username']) . ',</p>';
+        $body .= '<p>Se ha creado una cuenta para ti en Anel Coworking.</p>';
+        $body .= '<p><strong>Nombre de usuario:</strong> ' . $user['username'] . '</p>';
+        $body .= '<p><strong>Correo electrónico:</strong> ' . $user['email'] . '</p>';
+        $body .= '<p>Para activar tu cuenta y establecer tu contraseña, por favor haz clic en el siguiente enlace:</p>';
+        $body .= "<p><a href='$url' style='padding: 10px 15px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px;'>Activar cuenta y establecer contraseña</a></p>";
+        $body .= '<p>Este enlace caducará en 24 horas. Si no completas el proceso en este tiempo, deberás contactar al administrador para solicitar un nuevo enlace.</p>';
+        $body .= '<p>Si no esperabas este correo, por favor ignóralo o contacta al administrador.</p>';
         $body .= '<p>Saludos,<br>Anel Coworking</p>';
 
         return $body;

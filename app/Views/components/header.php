@@ -51,6 +51,12 @@ $profileImageUrl = base_url('/uploads/avatars/' . esc($profileImage)) . '?nocach
             </li>
 
             <?php if ($isLoggedIn): ?>
+                <li class="nav-item">
+                    <a class="nav-link text-danger d-flex align-items-center" href="<?= base_url('my-bookings') ?>">
+                        <i class="bi bi-calendar-check me-1"></i> Mis Reservas
+                    </a>
+                </li>
+
                 <?php if ($userRoleId == 1): ?> 
                 <!-- Menú de administración (solo visible para administradores) -->
                 <li class="nav-item dropdown">

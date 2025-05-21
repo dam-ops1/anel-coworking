@@ -22,6 +22,7 @@ $routes->get('auth/forgot-password', 'AuthController::forgotPasswordView');
 $routes->post('auth/password-email', 'AuthController::sendResetPasswordEmail');
 
 $routes->get('auth/forgot-password/(:any)', 'AuthController::resetPassword/$1');
+$routes->get('auth/reset-password/(:any)', 'AuthController::resetPassword/$1');
 
 $routes->post('auth/reset-password', 'AuthController::resetPasswordPost');
 
@@ -61,6 +62,7 @@ $routes->post('bookings/create', 'BookingController::create');
 $routes->get('bookings/confirmation/(:num)', 'BookingController::confirmation/$1');
 $routes->get('bookings/cancel/(:num)', 'BookingController::cancel/$1');
 $routes->get('bookings/list', 'BookingController::index');
+$routes->get('my-bookings', 'BookingController::index', ['filter' => 'auth']);
 
 // Admin Routes for Room Management
 $routes->group('admin', ['filter' => 'auth'], static function ($routes) {

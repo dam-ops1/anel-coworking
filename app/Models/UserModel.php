@@ -41,8 +41,7 @@ class UserModel extends Model
         'username'    => 'required|min_length[3]|max_length[50]|is_unique[users.username,user_id,{user_id}]',
         'email'       => 'required|valid_email|max_length[255]|is_unique[users.email,user_id,{user_id}]',
         'full_name'   => 'permit_empty|max_length[100]',
-        'password'    => 'permit_empty|min_length[8]|max_length[255]', // Required on create, optional on update
-        'is_active'   => 'required|in_list[0,1]',
+        'password'    => 'permit_empty|min_length[6]|max_length[255]', 
     ];
 
     protected $validationMessages = [
@@ -69,14 +68,18 @@ class UserModel extends Model
 
         // agregamos el role_id por defecto
         $userData['role_id'] = 2;
+        
+        // Establecer email_verified a 0 explícitamente
+        $userData['email_verified'] = 0;
+        
+        // Establecer is_active a 0 explícitamente
+        $userData['is_active'] = 0;
 
         // Generar un token de activación
         $this->addTokentoUser($userData);
 
-
         // Generar la fecha de creación
         $userData['created_at'] = date('Y-m-d H:i:s');
-
 
         // Intentar guardar y si falla retornar false
         if (! $this->save($userData)) return null;
@@ -108,24 +111,19 @@ class UserModel extends Model
     }
 
     /**
-     * Verifica si el usuario existe y si la contraseña es correcta, 
-     * además verifica si el usuario esta activo
-     * Por último actualiza el estado del usuario a activo
+     * Verifica si el usuario existe y si la contraseña es correcta.
+     * La verificación de email_verified debe hacerse en el controlador.
      * 
      * @param string $email
      * @param string $pass
      * @return array|null
      * 
      * */
-
     public function verifyUser($email, $pass)
     {
-
-        
-        $user = $this->where(['email' => $email, 'email_verified' => 1])->first();
+        $user = $this->where('email', $email)->first();
 
         if (!$user || !password_verify($pass, $user['password_hash'])) return null;
-        if ($user['email_verified'] == 0) return null;
 
         $this->update($user['user_id'], [
             'is_active' => 1,

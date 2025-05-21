@@ -24,6 +24,10 @@
                     <i class="fas fa-info-circle"></i> Las reservas solo están disponibles de lunes a viernes. No se permiten reservas en fin de semana.
                 </div>
 
+                <?php if (session('error')): ?>
+                    <div class="alert alert-danger"><?= esc(session('error')) ?></div>
+                <?php endif; ?>
+
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="mb-2">
@@ -61,7 +65,7 @@
                             <input type="date" id="end_date" name="end_date" 
                                   class="form-control form-control-lg" 
                                   value="<?= esc($endSelected) ?>" 
-                                  min="<?= esc($startSelected) ?>" required>
+                                  min="<?= esc($minDate) ?>" required>
                         </div>
                     </div>
                 </div>
@@ -71,23 +75,27 @@
                         <label class="form-label">Hora inicio</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                            <input type="time" name="start_time" value="09:00" 
-                                  class="form-control form-control-lg">
+                            <input type="time" id="start_time" name="start_time" 
+                                  value="<?= esc($startTimeSelected) ?>" 
+                                  class="form-control form-control-lg"
+                                  <?= ($startSelected === $currentDate) ? "min='{$minTime}'" : '' ?>>
                         </div>
+                        <?php if ($startSelected === $currentDate): ?>
+                            <small class="form-text text-muted">
+                                La hora mínima para hoy es <?= esc($minTime) ?>
+                            </small>
+                        <?php endif; ?>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Hora fin</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                            <input type="time" name="end_time" value="10:00" 
+                            <input type="time" id="end_time" name="end_time" 
+                                  value="<?= esc($endTimeSelected) ?>" 
                                   class="form-control form-control-lg">
                         </div>
                     </div>
                 </div>
-
-                <?php if (session('error')): ?>
-                    <div class="alert alert-danger mt-3"><?= esc(session('error')) ?></div>
-                <?php endif; ?>
 
                 <div class="d-flex justify-content-end mt-5">
                     <button type="submit" class="btn btn-danger">Buscar salas disponibles</button>

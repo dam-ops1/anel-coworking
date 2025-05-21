@@ -85,7 +85,7 @@ class UserController extends BaseController
     {
         $session = session();
         $validationRules = $this->userModel->getValidationRules([
-            'password' => 'required|min_length[8]|max_length[255]' // Override to make password required for create
+            'password' => 'required|min_length[6]|max_length[255]' // Override to make password required for create
         ]);
 
         if (!$this->validate($validationRules)) {
@@ -98,21 +98,27 @@ class UserController extends BaseController
             return redirect()->to('admin/users/new');
         }
 
-        // Generate activation token
+        // Generate tokens for activation and password reset
         $activationToken = bin2hex(random_bytes(20));
+        
+        // Create reset token expiration (24 hours)
+        $expiresAt = new \DateTime();
+        $expiresAt->modify('+24 hours');
 
         $dataToSave = [
             'role_id'     => $this->request->getPost('role_id'),
             'username'    => $this->request->getPost('username'),
             'email'       => $this->request->getPost('email'),
             'full_name'   => $this->request->getPost('full_name'),
-            'is_active'   => $this->request->getPost('is_active'),
+            'is_active'   => 0, // Set default value to inactive until email verification
             'email_verified' => 0,
-            'activation_token' => $activationToken
+            'activation_token' => $activationToken,
+            'reset_token' => $activationToken, // Use the same token for simplicity
+            'reset_token_expires' => $expiresAt->format('Y-m-d H:i:s')
         ];
 
-        // Hash password before saving
-        $dataToSave['password_hash'] = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+        // Hash password before saving - using a placeholder password since the user will set their own
+        $dataToSave['password_hash'] = password_hash(bin2hex(random_bytes(10)), PASSWORD_DEFAULT);
 
         if ($this->userModel->save($dataToSave)) {
             // Get the ID of the newly created user
@@ -121,15 +127,16 @@ class UserController extends BaseController
             // Retrieve the full user data for the email
             $newUser = $this->userModel->find($userId);
             
-            // Send activation email
+            // Send combined verification and password reset email
             $emailController = new \App\Controllers\EmailController();
-            $emailController->sendEmailToRegister(
+            $emailController->sendEmailToActivateAndSetPassword(
                 $newUser['email'],
-                'Activación de Cuenta - Anel Coworking',
-                $newUser
+                'Activación de Cuenta y Establecer Contraseña - Anel Coworking',
+                $newUser,
+                $activationToken
             );
             
-            $session->setFlashdata('success', 'Usuario creado exitosamente. Se ha enviado un correo de activación.');
+            $session->setFlashdata('success', 'Usuario creado exitosamente. Se ha enviado un correo de activación con instrucciones para establecer la contraseña.');
             return redirect()->to('admin/users');
         } else {
             $session->setFlashdata('error', 'Error al crear el usuario. Por favor, inténtelo de nuevo.');
@@ -193,7 +200,7 @@ class UserController extends BaseController
             'username'    => $this->request->getPost('username'),
             'email'       => $this->request->getPost('email'),
             'full_name'   => $this->request->getPost('full_name'),
-            'is_active'   => $this->request->getPost('is_active'),
+            'is_active'   => $user['is_active'],
         ];
 
         // Update password only if provided

@@ -18,6 +18,8 @@ class RoomController extends BaseController
     public function index()
     {
         $today = date('Y-m-d');
+        $now = new DateTime();
+        $currentHour = $now->format('H:i');
         
         // Asegurarse que la fecha mínima no sea fin de semana
         $dayOfWeek = date('w', strtotime($today));
@@ -28,15 +30,16 @@ class RoomController extends BaseController
         }
 
         $isModify = $this->request->getGet('modify');
-
-        if (! $isModify) {
-            
-            session()->remove(['cal_start', 'cal_end', 'booking_start_time', 'booking_end_time']);
-            
-            $startSelected = '';
-            $endSelected = '';
-        } else {
-            
+        $oldInput = session()->getFlashdata('_ci_old_input');
+        
+        if ($oldInput && isset($oldInput['post'])) {
+            // Recuperar valores del formulario anterior en caso de error
+            $startSelected = $oldInput['post']['start_date'] ?? $today;
+            $endSelected = $oldInput['post']['end_date'] ?? $startSelected;
+            $startTimeSelected = $oldInput['post']['start_time'] ?? '09:00';
+            $endTimeSelected = $oldInput['post']['end_time'] ?? '10:00';
+        } else if ($isModify) {
+            // Recuperar valores de la sesión si estamos modificando una reserva existente
             $startSelected = session('cal_start') ?: $today;
             $endSelected   = session('cal_end')   ?: $startSelected;
             
@@ -46,12 +49,39 @@ class RoomController extends BaseController
             if ($endSelected < $startSelected) {
                 $endSelected = $startSelected;
             }
+            
+            // Recuperar horas si existen en la sesión
+            $startTimeSelected = '';
+            $endTimeSelected = '';
+            if (session('booking_start_time')) {
+                $startTime = new DateTime(session('booking_start_time'));
+                $startTimeSelected = $startTime->format('H:i');
+            }
+            if (session('booking_end_time')) {
+                $endTime = new DateTime(session('booking_end_time'));
+                $endTimeSelected = $endTime->format('H:i');
+            }
+        } else {
+            // Valores predeterminados para nuevo formulario
+            session()->remove(['cal_start', 'cal_end', 'booking_start_time', 'booking_end_time']);
+            
+            $startSelected = '';
+            $endSelected = '';
+            $startTimeSelected = '09:00';
+            $endTimeSelected = '10:00';
         }
+
+        // Calcular hora mínima para hoy
+        $minTime = ($startSelected === $today) ? $currentHour : '00:00';
 
         return view('rooms/index', [
             'startSelected' => $startSelected,
             'endSelected'   => $endSelected,
+            'startTimeSelected' => $startTimeSelected,
+            'endTimeSelected' => $endTimeSelected,
             'minDate'       => $today,
+            'minTime'       => $minTime,
+            'currentDate'   => $today,
         ]);
     }
     
@@ -70,41 +100,65 @@ class RoomController extends BaseController
         $endTime = $this->request->getPost('end_time');
         
         // Validar campos requeridos
-        if (empty($startDate) || empty($endDate)) {
+        if (empty($startDate) || empty($endDate) || empty($startTime) || empty($endTime)) {
             return redirect()->back()
-                ->with('error', 'Debes seleccionar fechas de inicio y fin.');
+                ->with('error', 'Debes completar todos los campos de fecha y hora.');
+        }
+        
+        // Validar que la fecha y hora de inicio no sea anterior a la actual
+        $now = new DateTime();
+        $startDateTime = new DateTime("$startDate $startTime");
+        $endDateTime = new DateTime("$endDate $endTime");
+        
+        if ($startDateTime < $now) {
+            return redirect()->back()
+                ->with('error', 'La fecha y hora de inicio no puede ser anterior a la fecha y hora actual (' . $now->format('d/m/Y H:i') . ').')
+                ->withInput();
+        }
+        
+        // Validar que la fecha y hora de fin sea posterior a la de inicio
+        if ($endDateTime <= $startDateTime) {
+            return redirect()->back()
+                ->with('error', 'La fecha y hora de fin debe ser posterior a la fecha y hora de inicio.')
+                ->withInput();
+        }
+        
+        // Validar que el tiempo de reserva no sea excesivo (por ejemplo, más de 8 horas)
+        $duration = $startDateTime->diff($endDateTime);
+        $hoursTotal = $duration->h + ($duration->days * 24);
+        
+        if ($hoursTotal > 8) {
+            return redirect()->back()
+                ->with('error', 'La duración máxima de una reserva es de 8 horas.')
+                ->withInput();
         }
         
         // Validar que ningún día en el rango sea fin de semana
-        $currentDate = new DateTime($startDate);
-        $endDateObj = new DateTime($endDate);
+        $currentDateCheck = clone $startDateTime;
+        $currentDateCheck->setTime(0, 0); // Resetear la hora a 00:00
+        $endDateObj = clone $endDateTime;
+        $endDateObj->setTime(0, 0)->modify('+1 day'); // Asegurar que se incluya el día final completo
         
-        while ($currentDate <= $endDateObj) {
-            $dayOfWeek = (int)$currentDate->format('w'); // 0 = domingo, 6 = sábado
+        while ($currentDateCheck < $endDateObj) {
+            $dayOfWeek = (int)$currentDateCheck->format('w'); // 0 = domingo, 6 = sábado
             
             if ($dayOfWeek == 0 || $dayOfWeek == 6) {
                 return redirect()->back()
-                    ->with('error', 'El período seleccionado incluye fines de semana (sábado o domingo). Solo se permiten reservas en días laborables (lunes a viernes).');
+                    ->with('error', 'El período seleccionado incluye fines de semana (sábado o domingo). Solo se permiten reservas en días laborables (lunes a viernes).')
+                    ->withInput();
             }
             
             // Avanzar al siguiente día
-            $currentDate->modify('+1 day');
+            $currentDateCheck->modify('+1 day');
         }
         
-        $startDateTime = date('Y-m-d H:i:s', strtotime("$startDate $startTime"));
-        $endDateTime = date('Y-m-d H:i:s', strtotime("$endDate $endTime"));
-        
-        if (strtotime($startDateTime) >= strtotime($endDateTime)) {
-            return redirect()->back()
-                ->with('error', 'La fecha de inicio debe ser anterior a la fecha de fin.');
-        }
-
+        // Guardar en la sesión
         session()->set('cal_start', $startDate);
         session()->set('cal_end', $endDate);
-        session()->set('booking_start_time', $startDateTime);
-        session()->set('booking_end_time', $endDateTime);
+        session()->set('booking_start_time', $startDateTime->format('Y-m-d H:i:s'));
+        session()->set('booking_end_time', $endDateTime->format('Y-m-d H:i:s'));
 
-        // En lugar de renderizar la vista directamente, redirigir a una ruta GET
+        // Redirigir a la lista de salas disponibles
         return redirect()->to('rooms/available');
     }
     
