@@ -57,36 +57,32 @@ app/
 ├── Views/            # Plantillas HTML
 ```
 ## 🔧 Controladores principales
-Controlador	Propósito
-AuthController	Registro, inicio de sesión y cierre de sesión
-BookingController	Crear y gestionar reservas de salas
-DashboardController	Panel principal del usuario
-RoomController	Gestión de salas (crear, listar, editar, eliminar)
-UserController	Administración de usuarios (perfil, edición, etc.)
-ProfileController	Modificación de información del usuario
-EmailController	Envío de correos electrónicos
-MessageController	Sistema de mensajería (contacto interno o externo)
+| Controlador         | Propósito                                              |
+|---------------------|--------------------------------------------------------|
+| `AuthController`    | Registro, inicio de sesión y cierre de sesión         |
+| `BookingController` | Crear y gestionar reservas de salas                   |
+| `DashboardController` | Panel principal del usuario                         |
+| `RoomController`    | Gestión de salas (crear, listar, editar, eliminar)    |
+| `UserController`    | Administración de usuarios (perfil, edición, etc.)    |
+| `ProfileController` | Modificación de información del usuario               |
+| `EmailController`   | Envío de correos electrónicos                         |
+| `MessageController` | Sistema de mensajería (contacto interno o externo)    |
 
 ## 🗄️ Modelos de datos
-Modelo	Tabla relacionada	Descripción
-UserModel	users	Información de los usuarios
-RoomModel	rooms	Detalles de las salas
-BookingModel	bookings	Reservas realizadas por los usuarios
+| Modelo       | Tabla relacionada | Descripción                        |
+|--------------|-------------------|----------------------------------|
+| UserModel    | users             | Información de los usuarios       |
+| RoomModel    | rooms             | Detalles de las salas             |
+| BookingModel | bookings          | Reservas realizadas por los usuarios |
 
 ## ⚙️ Instalación y configuración
-Clona o descarga el proyecto.
-
-Coloca los archivos en el directorio raíz de tu servidor (por ejemplo, htdocs o www).
-
-Copia el archivo env a .env y ajusta el baseURL y la base de datos.
-
-Configura la conexión a la base de datos en app/Config/Database.php.
-
-Crea las tablas en tu base de datos MySQL según el modelo anterior.
-
-Asegúrate de apuntar tu servidor web a la carpeta public.
-
-Accede desde tu navegador en http://localhost/tu_proyecto/public.
+1. Clona o descarga el proyecto.
+2. Coloca los archivos en el directorio raíz de tu servidor (por ejemplo, `htdocs` o `www`).
+3. Copia el archivo `env` a `.env` y ajusta el `baseURL` y la base de datos.
+4. Configura la conexión a la base de datos en `app/Config/Database.php`.
+5. Crea las tablas en tu base de datos MySQL según el modelo anterior.
+6. Asegúrate de apuntar tu servidor web a la carpeta `public`.
+7. Accede desde tu navegador en `http://localhost/tu_proyecto/public`.
 
 ## 📌 Rutas comunes (ejemplo)
 Ruta	Método HTTP	Acción
@@ -99,28 +95,28 @@ Ruta	Método HTTP	Acción
 /logout	GET	Cerrar sesión
 
 ## 🔒 Seguridad
-Validación de formularios del lado del servidor
+- **Validación de formularios del lado del servidor**
 
-Protección CSRF incluida por CodeIgniter
+- **Protección CSRF incluida por CodeIgniter**
 
-Gestión de sesiones
+- **Gestión de sesiones**
 
 ## 🧪 Estado actual del proyecto
 Actualmente implementado:
 
-Registro/login de usuarios
+- Registro/login de usuarios
 
-Listado y reserva de salas
+- Listado y reserva de salas
 
-Futuras mejoras (sugeridas):
+- Futuras mejoras (sugeridas):
 
-Roles de administrador
+- Roles de administrador
 
-Gestión de disponibilidad de salas
+- Gestión de disponibilidad de salas
 
-Notificaciones por correo
+- Notificaciones por correo
 
-Integración con calendarios
+- Integración con calendarios
 
 ## 👨‍💻 Autores
 Este proyecto fue desarrollado como solución para gestionar un espacio de coworking moderno, enfocado en la simplicidad y eficiencia del uso compartido de recursos.
