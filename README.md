@@ -85,14 +85,16 @@ app/
 7. Accede desde tu navegador en `http://localhost/tu_proyecto/public`.
 
 ## 📌 Rutas comunes (ejemplo)
-Ruta	Método HTTP	Acción
-/login	GET/POST	Mostrar formulario / Iniciar sesión
-/register	GET/POST	Registro de usuario
-/dashboard	GET	Panel principal del usuario
-/rooms	GET	Listar salas
-/rooms/create	POST	Crear nueva sala
-/bookings	GET/POST	Ver o crear reservas
-/logout	GET	Cerrar sesión
+| Ruta           | Método HTTP | Acción                          |
+|----------------|-------------|--------------------------------|
+| /login         | GET/POST   | Mostrar formulario / Iniciar sesión |
+| /register      | GET/POST   | Registro de usuario             |
+| /dashboard     | GET        | Panel principal del usuario     |
+| /rooms         | GET        | Listar salas                   |
+| /rooms/create  | POST       | Crear nueva sala               |
+| /bookings      | GET/POST   | Ver o crear reservas           |
+| /logout        | GET        | Cerrar sesión                  |
+
 
 ## 🔒 Seguridad
 - **Validación de formularios del lado del servidor**
