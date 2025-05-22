@@ -5,32 +5,53 @@ namespace App\Controllers;
 use App\Database\Seeds\RoleSeeder;
 use App\Models\RoleModel;
 use App\Models\UserModel;
-// Remove if not used elsewhere or replace with specific model if created for roles
-// use App\Models\RoleModel; 
 
 class UserController extends BaseController
 {
     protected $userModel;
     protected $roleModel; 
 
+    protected $rulesRegister;
+    protected $messagesRegister;
+    protected $emailController;
+
     public function __construct()
     {
+
+        helper("userRules");
+        helper("userMesseges");
+
+
         $this->userModel = new UserModel();
         $this->roleModel = new RoleModel();
+
+        $this->rulesRegister = get_user_register_rules();
+
+        $this->messagesRegister = get_user_register_messege();
+
+        $this->emailController = new \App\Controllers\EmailController();
+
     }
 
+
+    // Método para mostrar todos los usuarios en el panel de administración,
+    // además de agregar los nombres de los roles a cada usuario.
 
     public function adminIndex()
     {
         $data = [
-            'users' => $this->userModel->limit(10)->findAll()
+            'users' => $this->userModel->findAll()
         ];
 
-        // Si tenemos roles, los agregamos separadamente
         $data['users'] = $this->addRoleNamesToUsers($data['users']);
 
         return view('admin/users/list', $data);
     }
+
+    /**
+     * Método para mostrar el formulario de creación de un nuevo usuario
+     * en el panel de administración.
+     */
 
     public function adminNew()
     {
@@ -81,55 +102,56 @@ class UserController extends BaseController
         return $users;
     }
 
+    /**
+     * Método para crear un nuevo usuario desde el panel de administración,
+     * utiliza el mismo formulario que el de registro, pero con un token de activación
+     * además de utilizar las validaciones de registro por si un valor es incorrecto.
+     */
+
     public function adminCreate()
     {
         $session = session();
-        $validationRules = $this->userModel->getValidationRules([
-            'password' => 'required|min_length[6]|max_length[255]' // Override to make password required for create
-        ]);
 
-        if (!$this->validate($validationRules)) {
+        if (! $this->validate($this->rulesRegister, $this->messagesRegister)) {
             $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
             
-            // Guardar los datos enviados y los errores para el formulario
             session()->setFlashdata('old_input', $this->request->getPost());
             session()->setFlashdata('errors', $this->validator->getErrors());
-            
-            return redirect()->to('admin/users/new');
+
+            return redirect()->back()
+                            ->withInput() 
+                            ->with('validation', $this->validator);
         }
 
-        // Generate tokens for activation and password reset
+        
         $activationToken = bin2hex(random_bytes(20));
         
-        // Create reset token expiration (24 hours)
+
         $expiresAt = new \DateTime();
         $expiresAt->modify('+24 hours');
 
-        $dataToSave = [
+        $user = [
             'role_id'     => $this->request->getPost('role_id'),
             'username'    => $this->request->getPost('username'),
             'email'       => $this->request->getPost('email'),
             'full_name'   => $this->request->getPost('full_name'),
-            'is_active'   => 0, // Set default value to inactive until email verification
+            'is_active'   => 0, 
             'email_verified' => 0,
             'activation_token' => $activationToken,
-            'reset_token' => $activationToken, // Use the same token for simplicity
+            'reset_token' => $activationToken, 
             'reset_token_expires' => $expiresAt->format('Y-m-d H:i:s')
         ];
 
-        // Hash password before saving - using a placeholder password since the user will set their own
-        $dataToSave['password_hash'] = password_hash(bin2hex(random_bytes(10)), PASSWORD_DEFAULT);
+        $user['password_hash'] = password_hash(bin2hex(random_bytes(10)), PASSWORD_DEFAULT);
 
-        if ($this->userModel->save($dataToSave)) {
-            // Get the ID of the newly created user
+        if ($this->userModel->save($user)) {
             $userId = $this->userModel->getInsertID();
             
-            // Retrieve the full user data for the email
+            
             $newUser = $this->userModel->find($userId);
             
-            // Send combined verification and password reset email
-            $emailController = new \App\Controllers\EmailController();
-            $emailController->sendEmailToActivateAndSetPassword(
+            // email combinado para activar cuenta y establecer contraseña
+            $this->emailController->sendEmailToActivateAndSetPassword(
                 $newUser['email'],
                 'Activación de Cuenta y Establecer Contraseña - Anel Coworking',
                 $newUser,
@@ -179,23 +201,23 @@ class UserController extends BaseController
             return redirect()->to('admin/users');
         }
         
-        // For unique field validation, we need to pass the user_id to ignore
-        $validationRules = $this->userModel->getValidationRules();
-        // Adjust rules for is_unique to work with current ID
-        $validationRules['username'] = str_replace('{user_id}', $id, $validationRules['username']);
-        $validationRules['email']    = str_replace('{user_id}', $id, $validationRules['email']);
+        
+        $this->rulesRegister['username'] = str_replace('{user_id}', $id, $this->rulesRegister['username']);
+        $this->rulesRegister['email']    = str_replace('{user_id}', $id, $this->rulesRegister['email']);
 
-        if (!$this->validate($validationRules)) {
+        if (! $this->validate($this->rulesRegister, $this->messagesRegister)) {
             $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
             
             // Guardar los datos enviados y los errores para el formulario
             session()->setFlashdata('errors', $this->validator->getErrors());
             session()->setFlashdata('old_input', $this->request->getPost());
-            
-            return redirect()->to('admin/users/edit/' . $id);
+
+            return redirect()->back()
+                            ->withInput() 
+                            ->with('validation', $this->validator);
         }
 
-        $dataToUpdate = [
+        $userUpdate = [
             'role_id'     => $this->request->getPost('role_id'),
             'username'    => $this->request->getPost('username'),
             'email'       => $this->request->getPost('email'),
@@ -211,7 +233,7 @@ class UserController extends BaseController
                 session()->setFlashdata('old_input', $this->request->getPost());
                 return redirect()->to('admin/users/edit/' . $id);
             }
-            $dataToUpdate['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
+            $userUpdate['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
         // Procesar la imagen si se ha subido una
@@ -224,33 +246,31 @@ class UserController extends BaseController
             $file->move(FCPATH . 'uploads/avatars/', $newName);
 
             // Añadir la imagen al array de datos a actualizar
-            $dataToUpdate['profile_image'] = $newName;
+            $userUpdate['profile_image'] = $newName;
             $imageUpdated = true;
         }
 
         $currentUserId = session()->get('user_id');
         $isCurrentUser = ($id == $currentUserId);
 
-        if ($this->userModel->update($id, $dataToUpdate)) {
-            // Si se actualizó la imagen y es el usuario actual, actualizar la sesión
+        if ($this->userModel->update($id, $userUpdate)) {
             if ($imageUpdated && $isCurrentUser) {
-                // Obtener datos actualizados del usuario
                 $updatedUser = $this->userModel->find($id);
                 
-                // Actualizar la sesión
+                
                 session()->set([
                     'profile_image' => $updatedUser['profile_image'],
                     'full_name' => $updatedUser['full_name'],
                     'email' => $updatedUser['email']
                 ]);
                 
-                // Forzar que la sesión se guarde inmediatamente
+                
                 session()->markAsTempdata('profile_refresh', 1, 300);
             }
             
             $session->setFlashdata('success', 'Usuario actualizado exitosamente.');
             
-            // Si es el usuario actual, añadir un parámetro para forzar la recarga completa
+            
             if ($isCurrentUser) {
                 return redirect()->to('admin/users?refresh=' . time());
             } else {
@@ -259,7 +279,7 @@ class UserController extends BaseController
         } else {
             $session->setFlashdata('error', 'Error al actualizar el usuario. Por favor, inténtelo de nuevo.');
             
-            // Guardar los datos enviados y los errores para el formulario
+            
             session()->setFlashdata('errors', $this->userModel->errors());
             session()->setFlashdata('old_input', $this->request->getPost());
             
@@ -277,12 +297,12 @@ class UserController extends BaseController
             return redirect()->to('admin/users');
         }
         
-        // Prevent deleting own account or superadmin (e.g., user_id 1 or specific role_id)
+        
         if ($user['user_id'] == $session->get('user_id')) {
             $session->setFlashdata('error', 'No puedes eliminar tu propia cuenta.');
             return redirect()->to('admin/users');
         }
-        // Add more checks if needed, e.g., prevent deleting user with role_id 1 (super admin)
+        
 
         if ($this->userModel->delete($id)) {
             $session->setFlashdata('success', 'Usuario eliminado exitosamente.');

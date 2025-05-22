@@ -19,26 +19,6 @@ class EmailController extends Controller
         
     }
 
-    public function sendEmailToRegister($to, $subject, $user)
-    {
-        
-
-        $this->email->setTo($to);
-        $this->email->setSubject($subject);
-        $message = $this->getBogyRegister($user);
-        $this->email->setMessage($message);
-                
-        if ($this->email->send()) {
-            // Mostrar mensaje de éxito
-            return $this->messageController->showMessage("Usuario Registrado", "Usuario registrado exitosamente, verifica tu correo para activar tu cuenta.", 'login', 'Iniciar Sesión');
-        } else {
-            
-            // Mostrar errores en caso de fallo
-            $this->messageController->showMessage("Error", "Ha ocurrido un error intentelo de nuevo más tarde.", 'register', 'Registro');
-        }
-       
-    }
-
     public function sendEmailToResetPassword($to, $subject, $user, $token)
     {
         $this->email->setTo($to);
@@ -119,7 +99,7 @@ class EmailController extends Controller
         $body .= '<p><strong>Nombre de usuario:</strong> ' . $user['username'] . '</p>';
         $body .= '<p><strong>Correo electrónico:</strong> ' . $user['email'] . '</p>';
         $body .= '<p>Para activar tu cuenta y establecer tu contraseña, por favor haz clic en el siguiente enlace:</p>';
-        $body .= "<p><a href='$url' style='padding: 10px 15px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px;'>Activar cuenta y establecer contraseña</a></p>";
+        $body .= "<p><a href='$url' style='padding: 10px 15px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 5px;'>Activar cuenta y establecer contraseña</a></p>";
         $body .= '<p>Este enlace caducará en 24 horas. Si no completas el proceso en este tiempo, deberás contactar al administrador para solicitar un nuevo enlace.</p>';
         $body .= '<p>Si no esperabas este correo, por favor ignóralo o contacta al administrador.</p>';
         $body .= '<p>Saludos,<br>Anel Coworking</p>';
@@ -143,7 +123,7 @@ class EmailController extends Controller
     
     private function getBodyBookingConfirmation($data)
     {
-        $url = base_url('bookings/confirmation/' . $data['booking_id']);
+        $url = base_url('my-bookings');
         
         $body = '<h1>Hola '. $data['user_name']. ', ¡Tu reserva ha sido confirmada!</h1>';
         $body .= '<div style="padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin: 20px 0;">';

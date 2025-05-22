@@ -8,9 +8,7 @@ use CodeIgniter\Controller;
 class AuthController extends BaseController
 {
     protected $userModel;
-    protected $rulesRegister;
     protected $rulesLogin;
-    protected $messagesRegister;
     protected $messagesLogin;
 
     protected $rulesForgotPassword;
@@ -30,10 +28,6 @@ class AuthController extends BaseController
         helper("userMesseges");
 
         $this->userModel = new UserModel();
-
-        $this->rulesRegister = get_user_register_rules();
-
-        $this->messagesRegister = get_user_register_messege();
 
         $this->rulesLogin = get_user_login_rules();
         $this->messagesLogin = get_user_login_messege();

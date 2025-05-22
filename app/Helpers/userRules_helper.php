@@ -1,17 +1,4 @@
 <?php
-function get_user_register_rules(): array
-{
-    return [
-        'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
-        'email' => 'required|valid_email|is_unique[users.email]',
-        'password' => 'required|min_length[6]',
-        'password_confirm' => 'required|matches[password]',
-        'full_name' => 'required|min_length[3]|max_length[50]',
-        'phone' => 'permit_empty|regex_match[/^\d{9,10}$/]',
-        'company_name' => 'permit_empty|max_length[100]',
-    ];
-}
-
 
 function get_user_login_rules(): array
 {
@@ -42,6 +29,16 @@ function get_user_profile_rules() {
         'full_name' => 'required|min_length[3]|max_length[100]',
         'email'     => 'required|valid_email|max_length[100]',
         'phone'     => 'permit_empty|regex_match[/^[0-9\-\+\s\(\)]*$/]|max_length[20]',
+    ];
+}
+
+function get_user_register_rules() {
+    return [
+        'role_id'     => 'required|integer',
+        'username'    => 'required|min_length[3]|max_length[50]|is_unique[users.username,user_id,{user_id}]',
+        'email'       => 'required|valid_email|max_length[255]|is_unique[users.email,user_id,{user_id}]',
+        'full_name'   => 'permit_empty|max_length[100]',
+        'password'    => 'permit_empty|min_length[6]|max_length[255]', 
     ];
 }
 

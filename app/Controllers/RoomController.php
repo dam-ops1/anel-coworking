@@ -8,10 +8,21 @@ use DateTime;
 class RoomController extends BaseController
 {
     protected $roomModel;
+
+    protected $rulesRoom;
+    protected $messagesRoom;
     
     public function __construct()
     {
         $this->roomModel = new RoomModel();
+
+        helper("roomRules");
+        helper("roomMessages");
+
+
+        $this->rulesRoom = get_room_rules();
+
+        $this->messagesRoom = get_room_messages();
     }
     
 
@@ -38,6 +49,8 @@ class RoomController extends BaseController
             $endSelected = $oldInput['post']['end_date'] ?? $startSelected;
             $startTimeSelected = $oldInput['post']['start_time'] ?? '09:00';
             $endTimeSelected = $oldInput['post']['end_time'] ?? '10:00';
+
+
         } else if ($isModify) {
             // Recuperar valores de la sesión si estamos modificando una reserva existente
             $startSelected = session('cal_start') ?: $today;
@@ -227,27 +240,14 @@ class RoomController extends BaseController
     public function adminCreate()
     {
         $session = session();
-        $validation = \Config\Services::validation();
 
-        $rules = [
-            'name'        => 'required|min_length[3]|max_length[100]',
-            'description' => 'permit_empty|max_length[500]',
-            'capacity'    => 'permit_empty|integer|greater_than[0]',
-            'floor'       => 'permit_empty|max_length[20]',
-            'price_hour'  => 'permit_empty|decimal',
-            'is_active'   => 'required|in_list[0,1]'
-        ];
-
-        if (!$this->validate($rules)) {
+        if (!$this->validate($this->rulesRoom, $this->messagesRoom)) {
             $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
-            // Pass validation errors and input back to the form view
-            $data = [
-                'errors' => $validation->getErrors(),
-                'current_room' => null
-            ];
-            // Conservar datos de input anterior
-            session()->setFlashdata('old_input', $this->request->getPost());
-            return view('admin/rooms/form', $data);
+            $session->setFlashdata('current_room', null);
+            $session->setFlashdata('old_input', $this->request->getPost());
+            $session->setFlashdata('validation', $this->validator);
+
+            return redirect()->back()->withInput();
         }
 
         $imageFile = $this->request->getFile('image');
@@ -324,37 +324,28 @@ class RoomController extends BaseController
             return redirect()->to('admin/rooms');
         }
 
-        $validation = \Config\Services::validation();
-        $rules = [
-            'name'        => 'required|min_length[3]|max_length[100]',
-            'description' => 'permit_empty|max_length[500]',
-            'capacity'    => 'permit_empty|integer|greater_than[0]',
-            'floor'       => 'permit_empty|max_length[20]',
-            'price_hour'  => 'permit_empty|decimal',
-            'is_active'   => 'required|in_list[0,1]'
-        ];
-
-        if (!$this->validate($rules)) {
+        if (!$this->validate($this->rulesRoom, $this->messagesRoom)) {
             $session->setFlashdata('error', 'Por favor, corrija los errores del formulario.');
-            // Almacenar errores y datos de entrada para la vista
-            session()->setFlashdata('errors', $validation->getErrors());
-            session()->setFlashdata('old_input', $this->request->getPost());
-            return redirect()->to('admin/rooms/edit/' . $id);
+            $session->setFlashdata('current_room', null);
+            $session->setFlashdata('old_input', $this->request->getPost());
+            $session->setFlashdata('validation', $this->validator);
+
+            return redirect()->back()->withInput();
         }
 
         $imageFile = $this->request->getFile('image');
-        $imageName = $room['image']; // Keep old image by default
+        $imageName = $room['image']; 
 
         if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
-            // A new image has been uploaded
+            
             $newImageName = $imageFile->getRandomName();
             try {
                 $imageFile->move(ROOTPATH . 'public/uploads/rooms', $newImageName);
-                // If move is successful, delete the old image if it's not the default
+                
                 if ($imageName && $imageName !== 'default_room.png' && file_exists(ROOTPATH . 'public/uploads/rooms/' . $imageName)) {
                     unlink(ROOTPATH . 'public/uploads/rooms/' . $imageName);
                 }
-                $imageName = $newImageName; // Update to new image name
+                $imageName = $newImageName;
             } catch (\Exception $e) {
                 $session->setFlashdata('error', 'Error al subir la nueva imagen: ' . $e->getMessage());
                 return redirect()->to('admin/rooms/edit/' . $id);

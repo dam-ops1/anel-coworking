@@ -28,17 +28,8 @@ class RoomModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
-    // protected $deletedField  = 'deleted_at'; // Only if useSoftDeletes is true
+    // protected $deletedField  = 'deleted_at'; 
 
-    // Validation
-    protected $validationRules      = [
-        'name'        => 'required|min_length[3]|max_length[100]',
-        'description' => 'permit_empty|max_length[500]',
-        'capacity'    => 'permit_empty|integer|greater_than[0]',
-        'floor'       => 'permit_empty|max_length[20]',
-        'price_hour'  => 'permit_empty|decimal',
-        'is_active'   => 'permit_empty|in_list[0,1]',
-    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
