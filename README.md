@@ -2,7 +2,7 @@
 markdown
 Copiar
 Editar
-# 🏢 Coworking Space Management App
+# 🏢 Intraconecta
 
 Esta es una aplicación web desarrollada en PHP usando el framework **CodeIgniter**, diseñada para gestionar un espacio de coworking. Permite a los usuarios registrarse, iniciar sesión y realizar reservas de salas.
 
@@ -55,7 +55,8 @@ app/
 ├── Controllers/      # Lógica de negocio y rutas
 ├── Models/           # Acceso a la base de datos
 ├── Views/            # Plantillas HTML
-🔧 Controladores principales
+```
+## 🔧 Controladores principales
 Controlador	Propósito
 AuthController	Registro, inicio de sesión y cierre de sesión
 BookingController	Crear y gestionar reservas de salas
@@ -66,13 +67,13 @@ ProfileController	Modificación de información del usuario
 EmailController	Envío de correos electrónicos
 MessageController	Sistema de mensajería (contacto interno o externo)
 
-🗄️ Modelos de datos
+## 🗄️ Modelos de datos
 Modelo	Tabla relacionada	Descripción
 UserModel	users	Información de los usuarios
 RoomModel	rooms	Detalles de las salas
 BookingModel	bookings	Reservas realizadas por los usuarios
 
-⚙️ Instalación y configuración
+## ⚙️ Instalación y configuración
 Clona o descarga el proyecto.
 
 Coloca los archivos en el directorio raíz de tu servidor (por ejemplo, htdocs o www).
@@ -87,7 +88,7 @@ Asegúrate de apuntar tu servidor web a la carpeta public.
 
 Accede desde tu navegador en http://localhost/tu_proyecto/public.
 
-📌 Rutas comunes (ejemplo)
+## 📌 Rutas comunes (ejemplo)
 Ruta	Método HTTP	Acción
 /login	GET/POST	Mostrar formulario / Iniciar sesión
 /register	GET/POST	Registro de usuario
@@ -97,14 +98,14 @@ Ruta	Método HTTP	Acción
 /bookings	GET/POST	Ver o crear reservas
 /logout	GET	Cerrar sesión
 
-🔒 Seguridad
+## 🔒 Seguridad
 Validación de formularios del lado del servidor
 
 Protección CSRF incluida por CodeIgniter
 
 Gestión de sesiones
 
-🧪 Estado actual del proyecto
+## 🧪 Estado actual del proyecto
 Actualmente implementado:
 
 Registro/login de usuarios
@@ -121,5 +122,5 @@ Notificaciones por correo
 
 Integración con calendarios
 
-👨‍💻 Autores
+## 👨‍💻 Autores
 Este proyecto fue desarrollado como solución para gestionar un espacio de coworking moderno, enfocado en la simplicidad y eficiencia del uso compartido de recursos.
