@@ -47,9 +47,8 @@ class RoomController extends BaseController
             // Recuperar valores del formulario anterior en caso de error
             $startSelected = $oldInput['post']['start_date'] ?? $today;
             $endSelected = $oldInput['post']['end_date'] ?? $startSelected;
-            $startTimeSelected = $oldInput['post']['start_time'] ?? '09:00';
-            $endTimeSelected = $oldInput['post']['end_time'] ?? '10:00';
-
+            $startTimeSelected = $oldInput['post']['start_time'] ?? $currentHour;
+            $endTimeSelected = $oldInput['post']['end_time'] ?? $currentHour;
 
         } else if ($isModify) {
             // Recuperar valores de la sesión si estamos modificando una reserva existente
@@ -80,8 +79,8 @@ class RoomController extends BaseController
             
             $startSelected = '';
             $endSelected = '';
-            $startTimeSelected = '09:00';
-            $endTimeSelected = '10:00';
+            $startTimeSelected = $currentHour;
+            $endTimeSelected = $currentHour;
         }
 
         // Calcular hora mínima para hoy
@@ -94,7 +93,7 @@ class RoomController extends BaseController
             'endTimeSelected' => $endTimeSelected,
             'minDate'       => $today,
             'minTime'       => $minTime,
-            'currentDate'   => $today,
+            'currentDate'   => $today
         ]);
     }
     
