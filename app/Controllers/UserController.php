@@ -229,7 +229,7 @@ class UserController extends BaseController
         $password = $this->request->getPost('password');
         if (!empty($password)) {
             if (strlen($password) < 8) {
-                $session->setFlashdata('errors', ['password' => 'La contraseña debe tener al menos 8 caracteres.']);
+                $session->setFlashdata('errors', ['password' => 'La contraseña debe tener al menos 6 caracteres.']);
                 session()->setFlashdata('old_input', $this->request->getPost());
                 return redirect()->to('admin/users/edit/' . $id);
             }

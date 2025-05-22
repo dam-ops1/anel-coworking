@@ -70,7 +70,7 @@ function get_user_register_messege() {
             'valid_email' => 'Por favor, introduce un correo electrónico válido.'
         ],
         'password' => [
-            'min_length' => 'La contraseña debe tener al menos 8 caracteres.'
+            'min_length' => 'La contraseña debe tener al menos 6 caracteres.'
         ]
     ];
 }
