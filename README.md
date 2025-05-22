@@ -1,68 +1,125 @@
-# CodeIgniter 4 Application Starter
+📄 README.md (actualizado con sección sobre CodeIgniter)
+markdown
+Copiar
+Editar
+# 🏢 Coworking Space Management App
 
-## What is CodeIgniter?
+Esta es una aplicación web desarrollada en PHP usando el framework **CodeIgniter**, diseñada para gestionar un espacio de coworking. Permite a los usuarios registrarse, iniciar sesión y realizar reservas de salas.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## 🚀 Funcionalidades
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+- **Registro de usuarios**
+- **Inicio de sesión**
+- **Gestión de autenticación**
+- **Reserva de salas**
+- **Listado de salas disponibles**
+- **Paneles de usuario**
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## 🛠️ Tecnologías utilizadas
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- **Backend**: PHP (CodeIgniter)
+- **Base de datos**: MySQL
+- **Framework**: CodeIgniter 4
+- **Arquitectura**: MVC (Modelo - Vista - Controlador)
 
-## Installation & updates
+## 🧭 ¿Cómo funciona CodeIgniter?
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+CodeIgniter 4 es un framework MVC (Modelo - Vista - Controlador) que organiza el código en tres capas principales:
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+- **Modelos (`app/Models`)**: Se encargan de interactuar con la base de datos.
+- **Controladores (`app/Controllers`)**: Contienen la lógica del negocio y gestionan las solicitudes HTTP.
+- **Vistas (`app/Views`)**: Archivos HTML que presentan la información al usuario.
 
-## Setup
+### Estructura típica de una solicitud
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+1. El usuario accede a una URL (por ejemplo: `/rooms`).
+2. CodeIgniter busca en `app/Config/Routes.php` para ver qué controlador debe manejarla.
+3. El controlador correspondiente ejecuta su método (por ejemplo, `RoomController::index()`).
+4. Si es necesario, el controlador usa un modelo (como `RoomModel`) para obtener datos.
+5. Luego pasa esos datos a una vista (`Views/rooms/index.php`) para mostrarlos.
 
-## Important Change with index.php
+### Archivos clave
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+- `public/index.php`: punto de entrada de la aplicación.
+- `.env`: configuración sensible (baseURL, base de datos).
+- `app/Config/Database.php`: configuración de la conexión a la base de datos.
+- `app/Config/Routes.php`: definición de rutas personalizadas.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+Puedes aprender más en la [guía oficial de CodeIgniter](https://codeigniter.com/user_guide/).
 
-**Please** read the user guide for a better explanation of how CI4 works!
+## 📁 Estructura del proyecto
 
-## Repository Management
+```plaintext
+app/
+├── Config/           # Configuración del framework
+├── Controllers/      # Lógica de negocio y rutas
+├── Models/           # Acceso a la base de datos
+├── Views/            # Plantillas HTML
+🔧 Controladores principales
+Controlador	Propósito
+AuthController	Registro, inicio de sesión y cierre de sesión
+BookingController	Crear y gestionar reservas de salas
+DashboardController	Panel principal del usuario
+RoomController	Gestión de salas (crear, listar, editar, eliminar)
+UserController	Administración de usuarios (perfil, edición, etc.)
+ProfileController	Modificación de información del usuario
+EmailController	Envío de correos electrónicos
+MessageController	Sistema de mensajería (contacto interno o externo)
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+🗄️ Modelos de datos
+Modelo	Tabla relacionada	Descripción
+UserModel	users	Información de los usuarios
+RoomModel	rooms	Detalles de las salas
+BookingModel	bookings	Reservas realizadas por los usuarios
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+⚙️ Instalación y configuración
+Clona o descarga el proyecto.
 
-## Server Requirements
+Coloca los archivos en el directorio raíz de tu servidor (por ejemplo, htdocs o www).
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+Copia el archivo env a .env y ajusta el baseURL y la base de datos.
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+Configura la conexión a la base de datos en app/Config/Database.php.
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+Crea las tablas en tu base de datos MySQL según el modelo anterior.
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+Asegúrate de apuntar tu servidor web a la carpeta public.
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+Accede desde tu navegador en http://localhost/tu_proyecto/public.
+
+📌 Rutas comunes (ejemplo)
+Ruta	Método HTTP	Acción
+/login	GET/POST	Mostrar formulario / Iniciar sesión
+/register	GET/POST	Registro de usuario
+/dashboard	GET	Panel principal del usuario
+/rooms	GET	Listar salas
+/rooms/create	POST	Crear nueva sala
+/bookings	GET/POST	Ver o crear reservas
+/logout	GET	Cerrar sesión
+
+🔒 Seguridad
+Validación de formularios del lado del servidor
+
+Protección CSRF incluida por CodeIgniter
+
+Gestión de sesiones
+
+🧪 Estado actual del proyecto
+Actualmente implementado:
+
+Registro/login de usuarios
+
+Listado y reserva de salas
+
+Futuras mejoras (sugeridas):
+
+Roles de administrador
+
+Gestión de disponibilidad de salas
+
+Notificaciones por correo
+
+Integración con calendarios
+
+👨‍💻 Autores
+Este proyecto fue desarrollado como solución para gestionar un espacio de coworking moderno, enfocado en la simplicidad y eficiencia del uso compartido de recursos.
