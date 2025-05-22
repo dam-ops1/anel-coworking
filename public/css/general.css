@@ -107,12 +107,13 @@
 
 /* Hero Section */
 .hero-section {
-  background-color: var(--cui-primary);
+  /* background-color: var(--cui-primary); */
   color: white;
   padding: 4rem 0;
   position: relative;
   overflow: hidden;
-  background-image: url('../images/pattern-dots.svg');
+  /* background-image: url('../images/pattern-dots.svg'); */
+  background-image: url('../images/subtitle_background.png');
   background-size: cover;
   background-blend-mode: soft-light;
 }
@@ -175,7 +176,10 @@
 /* Events Section */
 .events-section {
   padding: 3rem 0;
-  background-color: #f8f9fa;
+  /* background-color: #f8f9fa; */
+  background-image: url('../images/event_background.png');
+  background-size: cover;
+  background-blend-mode: soft-light;
 }
 
 .section-title {

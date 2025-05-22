@@ -20,8 +20,8 @@
     <?= $this->include('components/header') ?>
 
     <!-- Main Content -->
-    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
-        <div class="body flex-grow-1 px-3">
+    <div class="wrapper d-flex flex-column min-vh-100 bg-white">
+        <div class="body flex-grow-1">
             <?= $this->renderSection('content') ?>
         </div>
 

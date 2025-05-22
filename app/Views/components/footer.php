@@ -1,4 +1,4 @@
-<footer class="bg-white py-4 border-top mt-auto">
+<footer class="bg-white py-4 px-5 border-top mt-auto ">
     <div class="container-fluid px-4">
         <div class="row align-items-start">
             <!-- ANEL: Logo y ubicación -->

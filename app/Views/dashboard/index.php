@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 
 <!-- Hero Section -->
-<section class="hero-section">
+<section class="hero-section px-5">
     <div class="container-fluid">
         <div class="hero-content">
             <h1 class="mb-0">El espacio para la <span class="text-highlight">innovación social</span> y<br>
@@ -17,7 +17,7 @@
 </section>
 
 <!-- Services Section -->
-<section class="services-section">
+<section class="services-section my-5 px-5">
     <div class="container-fluid">
         <div class="row g-4">
             <!-- Gestión de recursos -->
@@ -66,7 +66,7 @@
 </section>
 
 <!-- Events Section -->
-<section class="events-section">
+<section class="events-section px-5">
     <div class="container-fluid">
         <h2 class="section-title mb-4">Próximos eventos</h2>
         <div class="row">
