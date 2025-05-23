@@ -51,6 +51,7 @@ function get_user_profile_messages() {
             'required'    => 'El correo es obligatorio.',
             'valid_email' => 'Debes ingresar un correo válido.',
             'max_length'  => 'El correo no puede superar los 100 caracteres.',
+            'is_unique' => 'Este correo electrónico ya está registrado.',
         ],
         'phone' => [
             'regex_match' => 'El teléfono solo puede contener números y símbolos válidos.',

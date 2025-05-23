@@ -24,10 +24,17 @@ function get_user_reset_password_rules(): array
     ];
 }
 
-function get_user_profile_rules() {
+function get_user_profile_rules($userId = null) {
+    $uniqueEmailRule = 'is_unique[users.email]';
+
+    // Si se está actualizando el perfil, evita el conflicto consigo mismo
+    if ($userId !== null) {
+        $uniqueEmailRule = "is_unique[users.email, user_id,{$userId}]";
+    }
+
     return [
         'full_name' => 'required|min_length[3]|max_length[100]',
-        'email'     => 'required|valid_email|max_length[100]',
+        'email'     => "required|valid_email|max_length[100]|{$uniqueEmailRule}",
         'phone'     => 'permit_empty|regex_match[/^[0-9\-\+\s\(\)]*$/]|max_length[20]',
     ];
 }

@@ -110,7 +110,7 @@
                                     <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" name="password" <?= !(isset($current_user) && $current_user) ? 'required' : '' ?>>
                                     <?php if (isset($errors['password'])): ?><div class="invalid-feedback"><?= esc($errors['password']) ?></div><?php endif; ?>
                                     <?php if (isset($current_user) && $current_user): ?>
-                                        <div class="form-text">Dejar en blanco para no cambiar la contraseña actual. Mínimo 8 caracteres.</div>
+                                        <div class="form-text">Dejar en blanco para no cambiar la contraseña actual. Mínimo 6 caracteres.</div>
                                     <?php else: ?>
                                          <div class="form-text">Mínimo 6 caracteres.</div>
                                     <?php endif; ?>

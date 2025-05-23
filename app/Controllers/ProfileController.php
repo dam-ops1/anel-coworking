@@ -54,8 +54,9 @@ class ProfileController extends BaseController
     {
         $userId = session()->get('user_id');
 
-        $rules = get_user_profile_rules();
+        $rules = get_user_profile_rules($userId);
         $messages = get_user_profile_messages();
+
 
         if (! $this->validate($rules, $messages)) {
             return redirect()->back()
