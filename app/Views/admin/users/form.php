@@ -48,7 +48,7 @@
                         <div class="row">
                             <!-- Datos Personales -->
                             <div class="col-md-6">
-                                <h5 class="mb-3 text-primary">Datos Personales</h5>
+                                <h5 class="mb-3">Datos Personales</h5>
                                 
                                 <div class="mb-3">
                                     <label for="full_name" class="form-label">Nombre Completo</label>
@@ -71,7 +71,7 @@
                             
                             <!-- Información de Cuenta -->
                             <div class="col-md-6">
-                                <h5 class="mb-3 text-primary">Información de Cuenta</h5>
+                                <h5 class="mb-3">Información de Cuenta</h5>
                                 
                                 <?php if (isset($current_user) && $current_user): ?>
                                 <div class="text-center mb-4">

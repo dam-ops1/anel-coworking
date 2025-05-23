@@ -9,7 +9,6 @@
     
     <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.3.1/dist/css/coreui.min.css" rel="stylesheet" integrity="sha384-PDUiPu3vDllMfrUHnurV430Qg8chPZTNhY8RUpq89lq22R3PzypXQifBpcpE1eoB" crossorigin="anonymous">
     <link rel="stylesheet" href="<?= base_url('css/general.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/auth.css') ?>">
 </head>
 <body>
     <?= $this->renderSection('content') ?>

@@ -367,3 +367,17 @@
     max-height: 28px;
   }
 }
+
+.bg-anel {
+  background-size: cover;
+  background-position: center;
+}
+
+  .form-control {
+    border-color: var(--bs-primary) !important;
+  }
+
+  .form-control:focus {
+    border-color: var(--bs-primary) !important;
+    box-shadow: 0 0 0 .2rem rgba(255, 87, 34, .25) !important;
+  }
