@@ -55,7 +55,7 @@ function get_user_profile_messages() {
         ],
         'phone' => [
             'regex_match' => 'El teléfono solo puede contener números y símbolos válidos.',
-            'max_length'  => 'El teléfono no puede superar los 20 caracteres.',
+            'max_length'  => 'El teléfono no puede superar los 15 caracteres.',
         ],
     ];
 }
