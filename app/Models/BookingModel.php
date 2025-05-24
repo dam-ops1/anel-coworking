@@ -89,6 +89,22 @@ class BookingModel extends Model
     }
     
     /**
+     * Obtener todas las reservas con información de salas y usuarios para administración
+     */
+    public function getAllBookingsWithDetails()
+    {
+        $db = \Config\Database::connect();
+        
+        $builder = $db->table('bookings b');
+        $builder->select('b.*, r.name as room_name, r.image as room_image, r.capacity, r.floor, u.full_name as user_name, u.email as user_email');
+        $builder->join('rooms r', 'r.room_id = b.room_id');
+        $builder->join('users u', 'u.user_id = b.user_id');
+        $builder->orderBy('b.start_time', 'DESC');
+        
+        return $builder->get()->getResultArray();
+    }
+    
+    /**
      * Cancelar una reserva
      */
     public function cancelBooking($bookingId)

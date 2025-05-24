@@ -140,4 +140,39 @@ class EmailController extends Controller
         
         return $body;
     }
+    
+    public function sendBookingCancellation($to, $subject, $data)
+    {
+        $this->email->setTo($to);
+        $this->email->setSubject($subject);
+        $message = $this->getBodyBookingCancellation($data);
+        $this->email->setMessage($message);
+
+        if ($this->email->send()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private function getBodyBookingCancellation($data)
+    {
+        $url = base_url('my-bookings');
+        
+        $body = '<h1>Hola '. $data['user_name']. ', Tu reserva ha sido cancelada</h1>';
+        $body .= '<div style="padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin: 20px 0; background-color: #fff3f3;">';
+        $body .= '<h2 style="color: #dc3545;">Detalles de la reserva cancelada</h2>';
+        $body .= '<p><strong>Sala:</strong> ' . $data['room_name'] . '</p>';
+        $body .= '<p><strong>Fecha de inicio:</strong> ' . $data['start_date'] . ' a las ' . $data['start_time'] . '</p>';
+        $body .= '<p><strong>Fecha de fin:</strong> ' . $data['end_date'] . ' a las ' . $data['end_time'] . '</p>';
+        $body .= '<p><strong>Precio total:</strong> €' . number_format($data['total_price'], 2) . '</p>';
+        $body .= '</div>';
+        $body .= '<p>Tu reserva ha sido cancelada por un administrador.</p>';
+        $body .= '<p>Si tienes alguna pregunta sobre esta cancelación, por favor ponte en contacto con nosotros.</p>';
+        $body .= "<p>Puedes realizar una nueva reserva desde tu <a href='$url'>área personal</a>.</p>";
+        $body .= '<p>Lamentamos las molestias que esto pueda causarte.</p>';
+        $body .= '<p>Saludos,<br>Anel Coworking</p>';
+        
+        return $body;
+    }
 }

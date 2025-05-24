@@ -86,3 +86,9 @@ $routes->group('admin', ['filter' => 'auth'], static function ($routes) {
     $routes->put('users/update/(:num)', 'UserController::adminUpdate/$1');
     $routes->delete('users/delete/(:num)', 'UserController::adminDelete/$1');
 });
+
+// Rutas para administración de reservas
+$routes->group('admin', ['filter' => 'auth'], static function ($routes) {
+    $routes->get('bookings', 'BookingController::adminIndex');
+    $routes->post('bookings/cancel/(:num)', 'BookingController::adminCancel/$1');
+});
