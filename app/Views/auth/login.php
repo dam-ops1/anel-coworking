@@ -87,12 +87,6 @@
             </button>
           </div>
         </form>
-
-        <hr class="my-4">
-
-        <div class="text-center">
-          ¿No tienes una cuenta? <a href="<?= base_url('register') ?>">Regístrate</a>
-        </div>
       </div>
     </div>
   </div>
