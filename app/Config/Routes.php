@@ -12,6 +12,8 @@ use CodeIgniter\Router\RouteCollection;
 $routes->post('login', 'AuthController::login');
 $routes->get('/', 'AuthController::login');
 $routes->get('login', 'AuthController::login');
+$routes->get('register', 'AuthController::register');
+$routes->post('register', 'AuthController::register');
 $routes->get('logout', 'AuthController::logout');
 $routes->get('auth/activate/(:any)', 'AuthController::activateUser/$1');
 $routes->get('auth/forgot-password', 'AuthController::forgotPasswordView');
