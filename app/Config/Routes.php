@@ -63,7 +63,7 @@ $routes->get('my-bookings', 'BookingController::index', ['filter' => 'auth']);
 //admin routes 
 
 
-$routes->group('admin', ['filter' => 'auth'], static function ($routes) {
+$routes->group('admin', static function ($routes) {
     
     $routes->get('rooms', 'RoomController::adminIndex'); 
     
@@ -78,7 +78,7 @@ $routes->group('admin', ['filter' => 'auth'], static function ($routes) {
 });
 
 
-$routes->group('admin', ['filter' => 'auth'], static function ($routes) {
+$routes->group('admin', static function ($routes) {
     $routes->get('users', 'UserController::adminIndex');
     $routes->get('users/new', 'UserController::adminNew');
     $routes->post('users/create', 'UserController::adminCreate');
@@ -88,7 +88,7 @@ $routes->group('admin', ['filter' => 'auth'], static function ($routes) {
 });
 
 // Rutas para administración de reservas
-$routes->group('admin', ['filter' => 'auth'], static function ($routes) {
+$routes->group('admin', static function ($routes) {
     $routes->get('bookings', 'BookingController::adminIndex');
     $routes->post('bookings/cancel/(:num)', 'BookingController::adminCancel/$1');
 });
