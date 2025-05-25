@@ -156,24 +156,20 @@ class AuthController extends BaseController
                 'Iniciar Sesión'
             );
         }
-        
-        // Marcar que el usuario ha activado su cuenta, pero requiere crear contraseña
-        // Generamos un token de restablecimiento de contraseña
+
         $resetToken = bin2hex(random_bytes(20));
         
         // Establecemos tiempo de expiración para el token
         $expiresAt = new \DateTime();
         $expiresAt->modify('+24 hours');
         
-        // Actualizamos el usuario con el token de restablecimiento
-        // Mantenemos is_active en 0 hasta que el usuario establezca su contraseña
         $this->userModel->update(
             $user['user_id'],
             [
-                'activation_token' => '', // Limpiamos el token de activación
+                'activation_token' => '',
                 'reset_token' => $resetToken,
                 'reset_token_expires' => $expiresAt->format('Y-m-d H:i:s'),
-                'is_active' => 0 // Aseguramos que el usuario permanece inactivo hasta completar registro
+                'is_active' => 0 
             ]
         );
         
@@ -188,10 +184,9 @@ class AuthController extends BaseController
 
     private function setSession($userData)
     {
-        // Asegurar que el valor de profile_image sea válido
+        
         $profileImage = 'default.png';
         if (!empty($userData['profile_image'])) {
-            // Verificar si el archivo existe
             $imagePath = FCPATH . 'uploads/avatars/' . $userData['profile_image'];
             if (file_exists($imagePath)) {
                 $profileImage = $userData['profile_image'];
@@ -209,7 +204,7 @@ class AuthController extends BaseController
 
         $this->session->set($data);
         
-        // Actualizar el último acceso del usuario
+        
         $this->userModel->update($userData['user_id'], [
             'last_login' => date('Y-m-d H:i:s')
         ]);
@@ -233,7 +228,6 @@ class AuthController extends BaseController
 
         $user = $this->userModel->where('email', $email)->first();
 
-        // Verificamos si el usuario existe
         if (!$user) {
             return redirect()->back()
                 ->withInput()
@@ -268,13 +262,11 @@ class AuthController extends BaseController
 
         if (!$user) return redirect()->to('login')->with('error', 'Token inválido o expirado.');
 
-        // Verificamos si el token ha expirado
         $expiresAt = new \DateTime($user['reset_token_expires']);
         if ($expiresAt < new \DateTime()) {
             return $this->messageController->showMessage("Error", "El tiempo para restaurar la contraseña ya ha expirado. Por favor, solicita un nuevo enlace para cambiar tu contraseña.", 'login', 'Iniciar Sesión');
         }
 
-        // Aquí puedes mostrar un formulario para que el usuario ingrese su nueva contraseña
         return view('auth/reset_password', ['token' => $token]);
     }
 
@@ -293,7 +285,6 @@ class AuthController extends BaseController
 
         if (!$user) return redirect()->to('login')->with('error', 'Token inválido o expirado.');
 
-        // Verificamos si el token ha expirado
         $expiresAt = new \DateTime($user['reset_token_expires']);
         if ($expiresAt < new \DateTime()) {
             return redirect()->to('login')->with('error', 'El tiempo para restaurar la contraseña ya ha expirado. Por favor, solicita un nuevo enlace para cambiar tu contraseña.');
@@ -304,9 +295,9 @@ class AuthController extends BaseController
             'password_hash' => password_hash($newPassword, PASSWORD_BCRYPT),
             'reset_token' => null,
             'reset_token_expires' => null,
-            'activation_token' => null, // Clear activation token too
-            'email_verified' => 1, // Marcamos la cuenta como verificada
-            'is_active' => 1 // Establecemos la cuenta como activa
+            'activation_token' => null, 
+            'email_verified' => 1,  
+            'is_active' => 1 
         ]);
 
         return redirect()->to('login')->with('success', 'Contraseña establecida exitosamente. Tu cuenta ha sido verificada y activada. Ya puedes iniciar sesión con tu nueva contraseña.');
