@@ -88,15 +88,6 @@ class UserModel extends Model
         $userData['activation_token'] = $token;
     }
 
-    /**
-     * Verifica si el usuario existe y si la contraseña es correcta.
-     * La verificación de email_verified debe hacerse en el controlador.
-     * 
-     * @param string $email
-     * @param string $pass
-     * @return array|null
-     * 
-     * */
     public function verifyUser($email, $pass)
     {
         $user = $this->where('email', $email)->first();

@@ -16,7 +16,7 @@
                 };
             ?>
 
-            <form action="<?= base_url('rooms/check-availability') ?>" method="post" class="card shadow-sm p-4">
+            <form action="<?= base_url('rooms/check-availability') ?>" method="post" class="card shadow-sm p-4" onsubmit="this.check_availability.disabled=true; this.check_availability.innerText='Cargando…'; return true;">
                 <?= csrf_field() ?>
                 <h2 class="mb-4 text-center">Selecciona fecha y hora</h2>
                 
@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-5">
-                    <button type="submit" class="btn btn-danger">Buscar salas disponibles</button>
+                    <button name="check_availability" type="submit" class="btn btn-danger">Buscar salas disponibles</button>
                 </div>
             </form>
         </div>

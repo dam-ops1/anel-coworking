@@ -12,7 +12,8 @@
       <div class="alert alert-success"><?= esc($msg) ?></div>
     <?php endif; ?>
 
-    <form action="<?= base_url('profile/update') ?>" method="post" enctype="multipart/form-data">
+    <form action="<?= base_url('profile/update') ?>" method="post" enctype="multipart/form-data"
+    onsubmit="this.update_profile.disabled=true; this.update_profile.innerText='Cargando…'; return true;">
       <?= csrf_field() ?>
       
       <?php
@@ -74,7 +75,7 @@
           <div class="invalid-feedback"><?= session('validation')->getError('phone') ?></div>
         <?php endif; ?>
       </div>
-      <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+      <button name="update_profile" type="submit" class="btn btn-primary">Guardar Cambios</button>
       <a href="<?= base_url('profile') ?>" class="btn btn-secondary ms-2">Cancelar</a>
     </form>
   </div>

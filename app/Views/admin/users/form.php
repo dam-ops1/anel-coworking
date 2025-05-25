@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="container-fluid mt-4">
 
-    <!-- Session Messages -->
+    
     <?php if (session()->getFlashdata('success')): ?>
         <div class="alert alert-success alert-dismissible fade show col-md-8 mx-auto" role="alert">
             <?= session()->getFlashdata('success') ?>
@@ -17,7 +17,7 @@
         </div>
     <?php endif; ?>
     
-    <!-- Validation Errors -->
+    
     <?php if (isset($errors) && !empty($errors) && is_array($errors)): ?>
         <div class="alert alert-danger col-md-8 mx-auto" role="alert">
             <h4 class="alert-heading">¡Error de Validación!</h4>
@@ -39,7 +39,8 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form action="<?= isset($current_user) && $current_user ? base_url('admin/users/update/' . $current_user['user_id']) : base_url('admin/users/create') ?>" method="post" enctype="multipart/form-data">
+                    <form action="<?= isset($current_user) && $current_user ? base_url('admin/users/update/' . $current_user['user_id']) : base_url('admin/users/create') ?>" method="post" enctype="multipart/form-data"
+                    onsubmit="this.create_user.disabled=true; this.create_user.innerText='Cargando…'; return true;">
                         <?= csrf_field() ?>
                         <?php if (isset($current_user) && $current_user): ?>
                             <input type="hidden" name="_method" value="PUT">
@@ -121,7 +122,7 @@
                         <div class="d-grid gap-2 mt-4">
                             <div class="row justify-content-center">
                                 <div class="col-md-8 d-flex justify-content-center gap-3">
-                                    <button type="submit" class="btn btn-primary btn-lg">
+                                    <button name="create_user" type="submit" class="btn btn-primary btn-lg">
                                         <?= isset($current_user) && $current_user ? 'Actualizar Usuario' : 'Guardar Usuario' ?>
                                     </button>
                                     <a href="<?= base_url('admin/users') ?>" class="btn btn-outline-secondary btn-lg">

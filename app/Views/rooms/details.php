@@ -84,7 +84,7 @@
                             </div>
                             
                             <?php if ($is_available): ?>
-                                <form action="<?= base_url('bookings/create') ?>" method="post">
+                                <form action="<?= base_url('bookings/create') ?>" method="post" onsubmit="this.confirm_reservation.disabled=true; this.confirm_reservation.innerText='Cargando…'; return true;">
                                     <?= csrf_field() ?>
                                     
                                     <input type="hidden" name="room_id" value="<?= $room['room_id'] ?>">
@@ -95,7 +95,7 @@
                                     </div>
                                     
                                     <div class="d-grid gap-2">
-                                        <button type="submit" class="btn btn-danger">Confirmar reserva</button>
+                                        <button name="confirm_reservation" type="submit" class="btn btn-danger">Confirmar reserva</button>
                                         <a href="<?= base_url('rooms/available') ?>" class="btn btn-outline-secondary">Volver a las salas disponibles</a>
                                     </div>
                                 </form>

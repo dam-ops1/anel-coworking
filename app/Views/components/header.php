@@ -97,7 +97,6 @@ $profileImageUrl = base_url('/uploads/avatars/' . esc($profileImage)) . '?nocach
                         <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-coreui-toggle="dropdown" aria-expanded="false">
                             <img src="<?= $profileImageUrl ?>" alt="<?= esc($userName) ?>" 
                                  class="rounded-circle border shadow-sm" style="width:38px; height:38px; object-fit:cover;">
-                            <span class="ms-2 d-none d-lg-inline text-dark"><?= esc($userName) ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="userDropdown">
                             <li>

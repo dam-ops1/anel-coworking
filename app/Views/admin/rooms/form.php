@@ -52,7 +52,8 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form action="<?= isset($current_room['room_id']) ? base_url('admin/rooms/update/' . $current_room['room_id']) : base_url('admin/rooms/create') ?>" method="post" enctype="multipart/form-data">
+                    <form action="<?= isset($current_room['room_id']) ? base_url('admin/rooms/update/' . $current_room['room_id']) : base_url('admin/rooms/create') ?>" method="post" enctype="multipart/form-data"
+                    onsubmit="this.create_room.disabled=true; this.create_room.innerText='Cargando…'; return true;">
                         <?= csrf_field() ?>
                         <?php if (isset($current_room['room_id'])): ?>
                             <input type="hidden" name="_method" value="PUT">
@@ -131,7 +132,7 @@
                         <div class="d-grid gap-2">
                             <div class="row justify-content-center mt-4">
                                 <div class="col-md-8 d-flex justify-content-center gap-3">
-                                    <button type="submit" class="btn btn-primary btn-lg">
+                                    <button name="create_room" type="submit" class="btn btn-primary btn-lg">
                                         <?= isset($current_room['room_id']) ? 'Actualizar Sala' : 'Guardar Sala' ?>
                                     </button>
                                     <a href="<?= base_url('admin/rooms') ?>" class="btn btn-outline-secondary btn-lg">
