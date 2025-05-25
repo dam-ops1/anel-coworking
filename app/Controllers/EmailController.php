@@ -13,9 +13,6 @@ class EmailController extends Controller
     {
         $this->messageController = new MessageController();
         $this->email = \Config\Services::email();
-
-        // Configuración del correo
-        $this->email->setFrom('anelcoworking@gmail.com', 'Anel Coworking');
         
     }
 
